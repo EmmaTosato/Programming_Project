@@ -25,7 +25,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
 
-# UTILS
+### FUNCTIONS ###A
 @st.cache(allow_output_mutation = True)
 def get_data(url):
     mental_health_df_raw = pd.read_csv(url)
@@ -34,6 +34,53 @@ def get_data(url):
 @st.cache
 def get_downloadable_data(df):
     return mental_health_df_raw.to_csv().encode('utf-8')
+
+# New column for the countries
+def new_column(df):
+    eu_states = pd.read_csv('eu_states.csv')
+    eu_l = list()
+    temp_l = list()
+
+    for i in range(len(df)):
+        if str(df.iloc[i]['country']) in list(eu_states['name']):
+            eu_l.append(df.iloc[i]['country'])
+            temp_l.append('Europe')
+        elif str(df.iloc[i]['country']) == 'United States':
+            temp_l.append('United States')
+        elif str(df.iloc[i]['country']) == 'Canada':
+            temp_l.append('Canada')
+        else:
+            temp_l.append('Other countries')
+
+    country2 = pd.Series(temp_l)
+
+    return eu_l, country2
+
+# Computing percenteges (without *100)
+def percent(df, row): 
+	perc = list() 
+	for column in df: 
+		values = df[column].loc[row] 
+		total = df[column].sum() 
+		perc.append((round((values/ total),2))) 
+	return perc
+
+# Label Encoding the categorical variables
+def encoding(mental_health_df):
+    mh_df_econded = mental_health_df.copy()
+    mh_df_econded.drop(columns= ['country'], inplace= True)
+
+    object_cols = ['gender', 'self_employed', 'family_history','treatment', 'work_interfere','no_employees','remote_work','tech_company',
+    'benefits','care_options', 'wellness_program','seek_help','anonymity','leave','mental_health_consequence','phys_health_consequence',
+    'coworkers','supervisor', 'mental_health_interview','phys_health_interview','mental_vs_physical','obs_consequence']
+
+    label_encoder = LabelEncoder()
+    for col in object_cols:
+        label_encoder.fit(mental_health_df[col])
+        mh_df_econded[col] = label_encoder.transform(mental_health_df[col])
+    
+    return  mh_df_econded
+
 
 
 ### TITLE AND CONTEXT ###
@@ -59,24 +106,24 @@ url = 'https://raw.githubusercontent.com/EmmaTosato/Programming_Project/main/sur
 mental_health_df_static_raw = get_data(url)
 mental_health_df_raw = mental_health_df_static_raw.copy()
 
-# MEANING OF THE COLUMNS 
+# USEFUL INFORMATIONS AND MEANING OF THE COLUMNS 
 mental_health_df_raw.head()
 mental_health_df_raw.info()
 st.text("")
 
 # Streamlit
-st.write('''The first four columns concern general informations about the individuals. 
-            Then, every attribute contains answers to a specific question.''')
+st.write('''Each column (or attribute) in the dataset contains the responses of each respondent to a specific question. 
+            The first questions are both general in nature, while the following questions address the main theme of this survey.''')
 
-with st.expander("Attributes"):
+with st.expander("Expand for the specific content of each column"):
     st.write('''
         * **Timestamp:** contains date, month, year and time
 
-        * **Age**
+        * **Age**: How old are you?
 
-        * **Gender**
+        * **Gender**: Which gender do you identify with?
 
-        * **Country**
+        * **Country**: What country do you live in?
 
         * **state:** If you live in the United States, which state or territory do you live in?
 
@@ -120,11 +167,11 @@ with st.expander("Attributes"):
 
         * **comments:** Any additional notes or comments
         ''')
-
+st.text("\n")
 st.subheader("Some highlights")
 st.write('''
 - In this dataset there are 1259 rows and 27 columns (attributes).
-- All the attribitues have object values, except for the age column that has integer values.\n\n
+- All the attribitue have object values, except for the age column that has integer values.\n\n
 ''')
 
 # CONVERTING THE COLUMN'S NAME TO LOWERCASE CHARACTERS
@@ -132,6 +179,7 @@ mental_health_df_raw.columns = mental_health_df_raw.columns.map(str.lower)
 
 # DROPPING COLUMNS
 mental_health_df_raw.isnull().sum()
+
 # timestamp and comments column
 mental_health_df_raw.drop(columns=['timestamp','comments'], inplace = True)
 
@@ -143,33 +191,12 @@ mental_health_df_raw.drop(columns=['state'], inplace = True)
 mental_health_df_raw['country'].value_counts()
 
 #Grouping states
-def group_states(mental_health_df_raw):
-    # Grouping states
-    eu_states = pd.read_csv('eu_states.csv')
-
-    l_eu = list()
-    count_eu = 0
-    count_nothing = 0
-    cont_usa = 0
-    cont_canada = 0
-    for i in range(len(mental_health_df_raw)):
-        if str(mental_health_df_raw.iloc[i]['country']) in list(eu_states['name']):
-            count_eu+=1
-            l_eu.append(mental_health_df_raw.iloc[i]['country'])
-        elif str(mental_health_df_raw.iloc[i]['country']) == 'United States':
-            cont_usa+=1
-        elif str(mental_health_df_raw.iloc[i]['country']) == 'Canada':
-            cont_canada +=1
-        else:
-            count_nothing+=1
-    return count_eu, cont_usa, cont_canada, count_nothing, l_eu
-
-
-count_eu, cont_usa, cont_canada, count_nothing, l_eu = group_states(mental_health_df_raw)
-print('People from Europe:',count_eu, '\nPeople from USA: ', cont_usa, '\nPeople from Canada: ',cont_canada, '\nPeople from other countries: ',count_nothing)
+eu_l, country2 = new_column(mental_health_df_raw)
+print('Number of people from different places:')
+print(country2.value_counts())
 
 # Visualizing european states
-eu_serie = pd.Series(l_eu)
+eu_serie = pd.Series(eu_l)
 eu_serie.value_counts()
 
 
@@ -235,9 +262,9 @@ mental_health_df.info()
 st.write('''
     After the cleaning of the dataset:
     - there are 1251 entries and 24 columns. 
-    - timestamp, comments and state columns were dropped.
+    - *timestamp*, *comments* and *state* columns were dropped.
     - gender and age columns were clean from null and non sense values.
-    - self_employed and work_interfere columns have their null values substituted. 
+    - *self_employed* and *work_interfere columns* have their null values substituted. 
 '''
 )
 st.text("\n")
@@ -265,7 +292,7 @@ st.download_button('Download raw dataset', get_downloadable_data(mental_health_d
 st.download_button('Download the clean dataset', get_downloadable_data(mental_health_df_static_clean), file_name = 'survey_clean.csv')
 st.write('Dataset source: [click link]('+ url +')')
 st.text("")
-st.text("")A
+st.text("")
 
 
 ### INTERESTING PLOTS ##
@@ -284,14 +311,6 @@ plt.rcParams["axes.spines.right"] = False
 plt.rcParams['axes.linewidth'] = 0.5 
 plt.rcParams['axes.edgecolor'] = 'black'
 
-# Computing percenteges (without *100)
-def percent(df, row): 
-	perc = list() 
-	for column in df: 
-		values = df[column].loc[row] 
-		total = df[column].sum() 
-		perc.append((round((values/ total),2))) 
-	return perc
 
 
 # AGE, GENDER AND COUNTRY DISTRIBUTIONS  (different from the jupyter version)
@@ -301,9 +320,9 @@ labels_ages = mental_health_df['age'].value_counts().index
 age_df = pd.DataFrame({'Age':labels_ages, 'Count': counts_age})
 age_df.sort_values(by=['Age', 'Count'], inplace= True)
 
-count_eu, cont_usa, cont_canada, count_nothing, l_eu = group_states(mental_health_df)
-cc = [count_eu,  cont_usa, cont_canada, count_nothing]
-countries = ['Europe', 'USA', 'Canada', 'Other countries']
+eu_l, country2 = new_column(mental_health_df)
+countries = country2.value_counts().index.to_list()
+cc = list(country2.value_counts().values)
 countries_df = pd.DataFrame({'Country':countries, 'Count': cc})
 
 counts_gender = mental_health_df['gender'].value_counts().to_list()
@@ -393,7 +412,7 @@ ax3.legend(title = "Treatment search",loc = 'upper right', bbox_to_anchor=(0.65,
 
 # show
 plt.tight_layout()
-st.subheader("Treatment and work interference distributions")
+st.subheader("Treatment and work interference")
 st.pyplot(fig1)
 st.text("\n\n")
 
@@ -440,7 +459,7 @@ ax1.legend(wedges, labels_rw,
 ax2.legend(title = "Remote working", loc = 'upper right', bbox_to_anchor=(0.55, 0.55, 0.5, 0.5))
 
 # Show
-st.subheader("Remote working and work interference distributions")
+st.subheader("Remote working and work interference")
 st.pyplot(fig1)
 st.text("\n\n")
 
@@ -697,18 +716,9 @@ st.text("\n\n")
 
 
 # CONVERTING CATEGORICAL VALUES
-# Label Encoding the categorical variables
-mh_df_econded = mental_health_df.copy()
-mh_df_econded.drop(columns= ['country'], inplace= True)
-object_cols = ['gender', 'self_employed', 'family_history','treatment', 'work_interfere','no_employees','remote_work','tech_company',
-'benefits','care_options', 'wellness_program','seek_help','anonymity','leave','mental_health_consequence','phys_health_consequence',
-'coworkers','supervisor', 'mental_health_interview','phys_health_interview','mental_vs_physical','obs_consequence']
-label_encoder = LabelEncoder()
-for col in object_cols:
-    label_encoder.fit(mental_health_df[col])
-    mh_df_econded[col] = label_encoder.transform(mental_health_df[col])
+mh_df_econded = encoding(mental_health_df)
 
-
+# HEATMAP
 # Compute the correlation matrix
 corr = mh_df_econded.corr(numeric_only= False)
 
@@ -716,9 +726,8 @@ corr = mh_df_econded.corr(numeric_only= False)
 mask = np.zeros_like(corr)
 mask[np.triu_indices_from(mask)] = True
 
+# Plot
 fig1, ax1 = plt.subplots( figsize=(20, 16) )
-
-# Heatmap
 sb.heatmap(corr,  cmap = 'YlGnBu', annot = True, fmt=".3f", 
            linewidth=.5, cbar_kws={ 'orientation': 'vertical', 'shrink': 0.7 } , square=True, mask= mask,)
 # Title
@@ -731,68 +740,17 @@ st.text("\n\n")
 
 
 ### MODELS ###
-st.header('Models')
+st.header('Classification Model')
 
-# PCA
-st.subheader("PCA")
-
-# Standardize the data to have a mean of ~0 and a variance of 1
-X = mh_df_econded.drop('treatment', axis=1)
-X = StandardScaler().fit_transform(X)
-
-# Create a PCA instance: pca
-n_components = 20
-pca = PCA(n_components = n_components)
-principal_components = pca.fit_transform(X)
-
-# Plot the explained variances in order to find the optimal number of components
-features = range(n_components)            
-fig1, ax1 = plt.subplots(figsize =(6, 3))                           
-ax1.bar(features, pca.explained_variance_ratio_, color='black')
-plt.xlabel('PCA features')
-plt.ylabel('variance %')
-plt.xticks(features)
-
-# pca
-n_components = 2
-pca = PCA(n_components = n_components)
-principal_components = pca.fit_transform(X)
-
-# Save components to a DataFrame
-principal_mh_df = pd.DataFrame(principal_components, columns = ['PC_' + str(x + 1) for x in range(n_components)])
-
-# Plot without labels
-fig2, ax1 = plt.subplots(figsize =(6, 4))                           
-targets = [0,1]
-for target in targets:
-    target_mask = mh_df_econded['treatment'] == target
-    ax1.scatter(principal_mh_df.loc[target_mask, 'PC_1'], principal_mh_df.loc[target_mask, 'PC_2'],
-                label=target)
-    # elementi = 0 ed elementi = 1
-
-plt.legend()
-plt.xlabel('Principal Component 1')
-plt.ylabel('Principal Component 2')
-
-# Shwo
-col1, col2 = st.columns(2)
-
-with col1:
-   st.pyplot(fig1)
-
-with col2:
-   st.pyplot(fig2)
-
-st.text("\n\n")
-
-
-# CLASSIFCATION
-st.subheader('Classification')
+# CLASSIFCATION - Target : treatment 
+st.subheader('Parameters')
 st.write('Here we run model to predict if a person should be treated for a mental health condition according to the values in the dataset.')
 
 # Classifiers
-names = ["Nearest Neighbors", "Linear SVM", "Decision Tree", "Random Forest", "AdaBoost","Gradient Tree Boosting","Gaussian Naive Bayes ""QDA"]
-name_plus = names.append('All')
+names = ['Nearest Neighbors', 'Linear SVM', 'Decision Tree', 'Random Forest', 'AdaBoost', 'Gradient Tree Boosting', 'Gaussian Naive Bayes' , 'QDA']
+name_plus = names.copy()
+name_plus.append('All')
+
 
 classifiers = [
     KNeighborsClassifier(),
@@ -812,9 +770,11 @@ attr.remove('treatment')
 # Declare the target variable
 y = mh_df_econded['treatment']
 
-# Select model and features
-select_model = st.selectbox('Select model:', names, index = 7)
-choices = st.multiselect('Select features', attr)
+# Select model, features and size
+select_model = st.selectbox('Select model:', name_plus, index = 0)
+choices = st.multiselect('Select features:', attr)
+test_size = st.slider('Test size: ', min_value=0.1, max_value=0.9, step =0.1)
+st.text("\n")
 
 # If
 model = KNeighborsClassifier() 
@@ -841,20 +801,20 @@ if len(choices) > 0 and st.button('RUN MODEL'):
     with st.spinner('Training...'): 
         X = mh_df_econded.drop('treatment', axis = 1)
         X = X[choices]
-        x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
+        x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=1)
         x_train = x_train.to_numpy().reshape(-1, len(choices))
         x_test = x_test.to_numpy().reshape(-1, len(choices))
 
+        # If one model il selected
         if select_model != 'All':
             model.fit(x_train, y_train)
-
             y_pred = model.predict(x_test)
-
             accuracy = accuracy_score(y_test, y_pred)
-
-            st.subheader("Result")
+            st.text("\n\n")
+            st.subheader('Results')
             st.write(f'Accuracy = {accuracy:.2f}')
 
+        # Il all models are selected
         else:
             accuracies = pd.Series(index = names, dtype=float)
 
@@ -867,13 +827,25 @@ if len(choices) > 0 and st.button('RUN MODEL'):
                 accuracies.loc[name] = acc
 
             accuracies.sort_values(ascending=True, inplace=True)
-            print(accuracies)
+            accuracies_df = pd.DataFrame({'Models':accuracies.index , 'Accuracies':accuracies.values})
+            print(accuracies_df)
 
             # Plot
-            st.subheader("Results")
-            accuracies_df = pd.DataFrame({'Models':accuracies.index , 'Accuracies':accuracies.values})
-            fig = px.bar(accuracies_df, y='Models', x='Accuracies', orientation='h', title = 'Accuracies of the models', color_discrete_sequence= px.colors.qualitative.Set3)
-            st.plotly_chart(fig)
+            fig, ax = plt.subplots(figsize = (8,4))
+            ax = sb.barplot(accuracies_df, x = 'Accuracies', y ='Models', palette='Blues')
+            ax.set_title("Plotting the Model Accuracies", fontsize=16, fontweight="bold", pad= 20, x = 0.35)
+
+            # Show
+            st.text("\n\n")
+            st.subheader('Results')
+            tab1, tab2 = st.tabs(['Accuracies chart', 'Accuracies table'])
+
+            with tab1:
+                st.pyplot(fig)
+            with tab2:
+                st.table(accuracies_df)
+
+            
         
 
 
