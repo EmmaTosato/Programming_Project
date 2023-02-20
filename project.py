@@ -85,8 +85,8 @@ def encoding(mental_health_df):
 
 ### TITLE AND CONTEXT ###
 st.title('A mental health survey')
-st.write('Programming for Data Science : final project ')
-st.text("")
+st.write('Programming for Data Science : final project.')
+st.text("\n\n")
 
 st.header('Dataset Information')
 st.write('''
@@ -95,8 +95,8 @@ in the tech workplace. The organization that has collected this data is the "Ope
 Open Sourcing Mental Health is a non-profit, corporation dedicated to raising awareness, educating, and providing resources 
 to support mental wellness in the tech and open source communities.')
 ''')
-st.text("")
-
+st.text("\n\n")
+st.text("\n\n")
 
 ### EXPLORATION AND CLEANING OF THE DATASET ###
 st.header('Content')
@@ -109,7 +109,6 @@ mental_health_df_raw = mental_health_df_static_raw.copy()
 # USEFUL INFORMATIONS AND MEANING OF THE COLUMNS 
 mental_health_df_raw.head()
 mental_health_df_raw.info()
-st.text("")
 
 # Streamlit
 st.write('''Each column (or attribute) in the dataset contains the responses of each respondent to a specific question. 
@@ -167,7 +166,7 @@ with st.expander("Expand for the specific content of each column"):
 
         * **comments:** Any additional notes or comments
         ''')
-st.text("\n")
+st.text("\n\n")
 st.subheader("Some highlights")
 st.write('''
 - In this dataset there are 1259 rows and 27 columns (attributes).
@@ -267,7 +266,7 @@ st.write('''
     - *self_employed* and *work_interfere columns* have their null values substituted. 
 '''
 )
-st.text("\n")
+st.text("\n\n")
 
 # Exploration of the dataset
 st.subheader('Exploration of the dataset')
@@ -284,19 +283,23 @@ if clean_option:
     st.write('CLEAN dataset')
     st.dataframe(mental_health_df_static_clean)
 
-st.text("")
+st.text("\n\n")
+st.text("\n\n")
 
 # DOWNLOAD Tabs 
 st.header("Download data")
 st.download_button('Download raw dataset', get_downloadable_data(mental_health_df_static_raw), file_name = 'survey.csv')
 st.download_button('Download the clean dataset', get_downloadable_data(mental_health_df_static_clean), file_name = 'survey_clean.csv')
 st.write('Dataset source: [click link]('+ url +')')
-st.text("")
-st.text("")
+st.text("\n\n")
+st.text("\n\n")
 
 
-### INTERESTING PLOTS ##
+### INTERESTING PLOTS ###
 st.header("Interesting plots")
+st.write('''Some graphs about the data just presented are shown.
+            In each graph one or more attributes of the dataset are represented, as indicated by the various subheaders''')
+st.text("\n")
 
 # USEFUL CODE
 # Useful data
@@ -310,7 +313,6 @@ plt.rcParams["axes.spines.top"] = False
 plt.rcParams["axes.spines.right"] = False
 plt.rcParams['axes.linewidth'] = 0.5 
 plt.rcParams['axes.edgecolor'] = 'black'
-
 
 
 # AGE, GENDER AND COUNTRY DISTRIBUTIONS  (different from the jupyter version)
@@ -351,17 +353,20 @@ with tab2:
 with tab3:
    st.plotly_chart(fig3)
 
-st.text("\n\n")
+st.text("\n")
+st.text("\n")
 
 
 # TREATMENT AND WORK INTERFERENCE DISTRIBUTIONS
 # 1
 labels_treat = mental_health_df['treatment'].value_counts().index.to_list()               # Yes, No
 counts_treat = list(map(lambda x: round((x/tot_rows),2), mental_health_df['treatment'].value_counts()))
+df_treat = pd.DataFrame({'Treatment': labels_treat, 'Counts': mental_health_df['treatment'].value_counts().values})
 
 # 2
 labels_work = mental_health_df['work_interfere'].value_counts().index.to_list()          # 'Sometimes', "Don't know", 'Never', 'Rarely', 'Often'
 counts_work = list(map(lambda x: round((x/tot_rows),2), mental_health_df['work_interfere'].value_counts())) 
+df_work = pd.DataFrame({'Work interference': labels_work, 'Counts': mental_health_df['work_interfere'].value_counts().values})
 
 # 3
 df_treat_work = mental_health_df.groupby(['work_interfere', 'treatment'])['treatment'].count().unstack(0)
@@ -369,25 +374,25 @@ df_treat_work = df_treat_work.reindex(index = labels_treat, columns = labels_wor
 yes_ans = list(df_treat_work[:].loc['Yes'].values)
 no_ans = list(df_treat_work[:].loc['No'].values)
 
-
 # The label locations
 x = np.arange(len(labels_work))  
 width = 0.4  # the width of the bars
 
 # Plot
-fig1, (ax1, ax2, ax3) = plt.subplots(1,3,figsize =(15, 6))
+fig1, (ax1, ax2) = plt.subplots(1,2,figsize =(15, 5))
+fig2, ax3 = plt.subplots(figsize =(8, 5))
 ax1.bar(labels_treat, counts_treat, color ='steelblue', label=labels_treat)
 ax2.bar(labels_work, counts_work, color ='steelblue', label=labels_work)
 ax3.bar(x - width/2, yes_ans, width, color= 'steelblue', label= 'Yes')
 ax3.bar(x + width/2, no_ans, width, color= 'lightblue', label ='No')
 
 # Labels, ticks 
-ax1.set_xlabel("Treatment search", labelpad= 10.0, fontname="Arial", fontsize=11, fontweight = 'medium')
-ax2.set_xlabel("Work interference", labelpad= 10.0, fontname="Arial", fontsize=11, fontweight = 'medium')
-ax3.set_xlabel("Work interference", labelpad= 10.0, fontname="Arial", fontsize=11, fontweight = 'medium')
-ax1.set_ylabel("Percentages", labelpad= 10.0, fontname="Arial", fontsize=11, fontweight = 'medium')
-ax2.set_ylabel("Percentages", labelpad= 10.0, fontname="Arial", fontsize=11, fontweight = 'medium')
-ax3.set_ylabel("Counts", labelpad= 10.0, fontname="Arial", fontsize=11, fontweight = 'medium')
+ax1.set_xlabel("Treatment search", labelpad= 37.0, fontname="Arial", fontsize=14, fontweight = 'medium')
+ax2.set_xlabel("Work interference", labelpad= 10.0, fontname="Arial", fontsize=14, fontweight = 'medium')
+ax3.set_xlabel("Work interference", labelpad= 10.0, fontname="Arial", fontsize=12, fontweight = 'medium')
+ax1.set_ylabel("Percentages", labelpad= 10.0, fontname="Arial", fontsize=14, fontweight = 'medium')
+ax2.set_ylabel("Percentages", labelpad= 10.0, fontname="Arial", fontsize=14, fontweight = 'medium')
+ax3.set_ylabel("Counts", labelpad= 10.0, fontname="Arial", fontsize=12, fontweight = 'medium')
 ax1.set_yticks(np.arange(0.0,1.1, 0.1))
 ax2.set_yticks(np.arange(0.0,1.1, 0.1))
 ax2.set_xticks(list(range(0,5)), labels_work, rotation=30, ha='right')
@@ -396,31 +401,57 @@ ax3.set_xticks(list(range(0,5)), labels_work, rotation=30, ha='right')
 # Percenteges
 for p in ax1.patches:
     height = p.get_height()
-    ax1.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center')
+    ax1.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 14, fontweight = 'bold')
 
 for p in ax2.patches:
     height = p.get_height()
-    ax2.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center')
+    ax2.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 14, fontweight = 'bold')
 
 # Title
-ax1.set_title('Employees who have \nsought treatment', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
-ax2.set_title('Work interference of the\n mental health condition', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
+ax1.set_title('Employees who have \nsought treatment', fontsize= 16, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
+ax2.set_title('Work interference of the\n mental health condition', fontsize= 16, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
 ax3.set_title('Seeking treatment \nand work interference', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
 
 # Legend
 ax3.legend(title = "Treatment search",loc = 'upper right', bbox_to_anchor=(0.65, 0.55, 0.5, 0.5))
 
-# show
+# Show - Streamlit
 plt.tight_layout()
 st.subheader("Treatment and work interference")
 st.pyplot(fig1)
-st.text("\n\n")
+st.pyplot(fig2)
+
+with st.expander("Learn more"):
+    tab1, tab2 =  st.tabs(["Explanation", "Tables"])
+
+    with tab1:
+        st.write('''
+        - The **first plot** shows the answers to the question, *"Have you sought treatment for a mental health condition?"*.
+        - The **second plot** shows respondent's answer to the question, *"If you have a mental health condition, do you feel that it interferes with your work?"*.
+            - It may not be so simple for the interviewed to admit a mental health condtion and the interference of it with the work, so the *"Sometimes"* response and *"Rarely"* could be vague answers.
+        - The **third plot** shows counts of people who have sought or not a treatment among each response of the previous graph.
+            - we see that the people who chose *"Sometimes"* had the highest number of people who actually have sought a treatment for mental health condition. Similar pattern was shown for the people who belonged to the *"Often category"*. Even if the answer was *"Sometimes"* (for the reasons stated above), a lot of people still decided to get help.
+            - unexpectedly, for people whose mental health *"Never"* has interfered at work, a small percentage still wanted to get treatment. It can be given by a variety of reasons like personal needs, a good capacity of keeping personal life and work spaced out or a preventive gesture.
+            - practically all of the respondent that didn't answer to the question (the *don't know* category) aren't seeking a treatment for mental health condition. So probably these people do not suffer from mental illness. Another assumption is that they could be reticent to search a treatment.
+        ''')
+
+    with tab2:
+        st.write('First graph')
+        st.dataframe(df_treat)
+        st.write('Second graph')
+        st.dataframe(df_work)
+        st.write('Third graph')
+        st.dataframe(df_treat_work)
+
+st.text("\n")
+st.text("\n")
 
 
 # REMOTE WORKING AND WORK INTERFERENCE DISTRIBUTIONS
 # 1
 labels_rw = mental_health_df['remote_work'].value_counts().index.to_list()[::-1]               # Yes, No
 counts_rw = list(map(lambda x: round((x/tot_rows),2), mental_health_df['remote_work'].value_counts().reindex(index= labels_rw)))
+df_rw = pd.DataFrame({'Remote working': labels_rw, 'Counts': mental_health_df['remote_work'].value_counts().reindex(index= labels_rw).values})
 
 # 2
 labels_work = mental_health_df['work_interfere'].value_counts().index.to_list()          # 'Sometimes', "Don't know", 'Never', 'Rarely', 'Often'
@@ -439,13 +470,13 @@ fig1, (ax1, ax2) = plt.subplots(1,2,figsize =(13, 5))
 fig1.subplots_adjust(wspace=0.3)
 
 wedges, text, autotext = ax1.pie(counts_rw, labeldistance=1.15, wedgeprops = { 'linewidth' : 1, 'edgecolor' : 'white' }, 
-        colors = colors , autopct='%1.0f%%', textprops={'fontsize': 12})
+        colors = colors , autopct='%1.0f%%', textprops={'fontsize': 12, 'fontweight':'bold'})
 ax2.bar(x - width/2, yes_ans, width, color= 'steelblue', label= 'Yes')
 ax2.bar(x + width/2, no_ans, width, color= 'lightblue', label ='No')
 
 # Labels, ticks 
-ax2.set_xlabel("Work interference", labelpad= 10.0, fontname="Arial", fontsize=11, fontweight = 'medium')
-ax2.set_ylabel("Remote work", labelpad= 10.0, fontname="Arial", fontsize=11, fontweight = 'medium')
+ax2.set_xlabel("Work interference", labelpad= 10.0, fontname="Arial", fontsize=12, fontweight = 'medium')
+ax2.set_ylabel("Remote work", labelpad= 10.0, fontname="Arial", fontsize=12, fontweight = 'medium')
 ax2.set_xticks(list(range(0,5)), labels_work, rotation=30, ha='right')
 
 # Titles
@@ -461,7 +492,26 @@ ax2.legend(title = "Remote working", loc = 'upper right', bbox_to_anchor=(0.55, 
 # Show
 st.subheader("Remote working and work interference")
 st.pyplot(fig1)
-st.text("\n\n")
+with st.expander("Learn more"):
+    tab1, tab2 =  st.tabs(["Explanation", "Tables"])
+
+    with tab1:
+         st.write('''
+            - The **first plot** shows the answers to the question, *"Do you work remotely (outside of an office) at least 50% of the time?"*
+            - To better understand if the are correlations between the type of working and the interference of a possible mental health 
+              condition with the work, there is the **second plot**.
+                - For every answer, the percentage of people who work in the office is bigger (obviously, given the result of the first plot).
+                - If we compute the percentages of people who work remotly and in the office for every answer, we find roughly the same percentages (about 30% work remotely and the other 70% in the offic), so there are no particular values to be highlighted.
+        ''')
+
+    with tab2:
+        st.write('First graph')
+        st.dataframe(df_rw)
+        st.write('Second graph')
+        st.dataframe(df_rw_interf)
+       
+st.text("\n")
+st.text("\n")
 
 
 # FAMILY HISTORY AND TREATMENT 
@@ -470,45 +520,64 @@ st.text("\n\n")
 labels_ans = list(reversed(mental_health_df['family_history'].value_counts().index.to_list()))                         # Yes, No
 reverse_serie = mental_health_df['family_history'].value_counts().reindex(index= mental_health_df['family_history'].value_counts().index[::-1])
 counts_ans = list(map(lambda x: round((x/tot_rows),2), reverse_serie))
-
+df_family = pd.DataFrame({'Family history': labels_rw, 'Counts': mental_health_df['family_history'].value_counts().reindex(index= labels_rw).values})
+ 
 # 2
-df_family = mental_health_df.groupby(['family_history', 'treatment'])['treatment'].count().unstack(0)
-df_family = df_family.reindex(index= df_family.index[::-1], columns=df_family.columns[::-1])               
-yes_ans = list(df_family[:].loc['Yes'].values)
-no_ans = list(df_family[:].loc['No'].values)
+df_family_treat = mental_health_df.groupby(['family_history', 'treatment'])['treatment'].count().unstack(0)
+df_family_treat = df_family_treat.reindex(index= df_family_treat.index[::-1], columns=df_family_treat.columns[::-1])               
+yes_ans = list(df_family_treat[:].loc['Yes'].values)
+no_ans = list(df_family_treat[:].loc['No'].values)
 
 # The label locations
 x = np.arange(len(labels_ans))  
 width = 0.35  
 
 # Plots
-fig1, (ax1, ax2) = plt.subplots(1, 2, figsize =(13, 5))
-fig1.subplots_adjust(wspace=0.3)
+fig1, (ax1, ax2) = plt.subplots(1, 2, figsize =(10, 5))
+fig1.subplots_adjust(wspace=0.4)
 
-wedges, text, autotext = ax1.pie(counts_ans, labels = labels_ans, labeldistance=1.15, wedgeprops = { 'linewidth' : 1, 'edgecolor' : 'white' }, 
-        colors = colors , autopct='%1.0f%%', textprops={'fontsize': 12})
+wedges, text, autotext = ax1.pie(counts_ans, labeldistance=1.15, wedgeprops = { 'linewidth' : 1, 'edgecolor' : 'white' }, 
+        colors = colors , autopct='%1.0f%%', textprops={'fontsize': 12, 'fontweight':'bold'})
 ax2.bar(x - width/2, yes_ans, width, color= 'steelblue', label= 'Yes')
 ax2.bar(x + width/2, no_ans, width, color= 'lightblue', label ='No')
 
 # Labels, ticks 
-ax1.legend(wedges, labels_ans,
-          title="Family history", loc = 'upper right',
-          bbox_to_anchor=(0.60, 0.60, 0.5, 0.5))
-ax2.set_xlabel("Family history", labelpad= 13.0, fontname="Arial", fontsize=11, fontweight = 'medium')
-ax2.set_ylabel("Treatment search", labelpad= 13.0, fontname="Arial", fontsize=11, fontweight = 'medium')
+ax2.set_xlabel("Family history", labelpad= 13.0, fontname="Arial", fontsize=12, fontweight = 'medium')
+ax2.set_ylabel("Treatment search", labelpad= 13.0, fontname="Arial", fontsize=12, fontweight = 'medium')
 ax2.set_xticks(x, labels_ans)
 
 # Titles
-ax1.set_title("Family History of the respondents", fontsize= 13, fontweight= 'heavy', color = 'black', y=1.1, pad=10)
-ax2.set_title("Family History and seeking for treatment", fontsize= 13, fontweight= 'heavy', color = 'black', y=1.1, pad=10)
+ax1.set_title("Family History of the respondents", fontsize= 14, fontweight= 'heavy', color = 'black', y=1.1, pad=65)
+ax2.set_title("Family History and seeking for treatment", fontsize= 14, fontweight= 'heavy', color = 'black', y=1.1, pad=40)
 
 # Legend
-ax2.legend(title = "Treatment search", loc = 'upper right', bbox_to_anchor=(0.80, 0.60, 0.5, 0.5))
+ax1.legend(wedges, labels_ans,
+          title="Family history", loc = 'upper right',
+          bbox_to_anchor=(0.60, 0.80, 0.5, 0.5))
+ax2.legend(title = "Treatment search", loc = 'upper right', bbox_to_anchor=(0.70, 0.70, 0.5, 0.5))
 
 # Show
 st.subheader("Family history and treatment")
 st.pyplot(fig1)
-st.text("\n\n")
+with st.expander("Learn more"):
+    tab1, tab2 =  st.tabs(["Explanation", "Tables"])
+
+    with tab1:
+         st.write('''
+            - The **first plot** shows the answer to the question, *"Do you have a family history of mental illness?"*.
+            - The **second plot** shows the counts of respondents who have sought a treatment, given that they came from a family with or without a history in mental illness.
+                - among who have a family history, the 74 % have sought a treatment while for the ones that don't have a family history, only the 35% have searched treatments.
+                - this means that peoople who have had cases of mental illness in the family pay more attention to this a topic. Infact, when it comes to mental health/brain health, the family history matters.
+        ''')
+
+    with tab2:
+        st.write('First graph')
+        st.dataframe(df_family)
+        st.write('Second graph')
+        st.dataframe(df_family_treat)
+
+st.text("\n")
+st.text("\n")
 
 
 # CONSEQUENCE OF DISCUSSION OF MENTAL AND PHYSICAL HEALTH WITH THE EMPLOYER
@@ -520,18 +589,22 @@ phc = mental_health_df['phys_health_consequence'].value_counts().reindex(index= 
 labels = mhc.index.to_list()                 
 counts_mhc = list(map(lambda x: round((x/tot_rows),2), mhc))
 counts_phc = list(map(lambda x: round((x/tot_rows),2), phc))
+
+df_mhc = pd.DataFrame({'Negative consequence of mental health discussion': labels, 'Counts': mhc.values})
+df_phc = pd.DataFrame({'Negative consequence of physical health discussion': labels, 'Counts': phc.values})
   
 # 2
 label_vs = mental_health_df['mental_vs_physical'].value_counts().reindex(['Yes', 'Don\'t know','No']).index.to_list()
 counts_vs = list(map(lambda x: round((x/tot_rows),2), mental_health_df['mental_vs_physical'].value_counts().reindex(label_vs))) 
+df_vs = pd.DataFrame({'Mental vs Physical': label_vs, 'Counts': mental_health_df['mental_vs_physical'].value_counts().reindex(label_vs).values})
 
 # The label locations
 x = np.arange(len(labels))  
 width = 0.35  
 
 # Plots
-fig1, (ax1,ax2) = plt.subplots(1,2,figsize =(15, 5))
-fig1.subplots_adjust(wspace=0.5)
+fig1, (ax1,ax2) = plt.subplots(1,2,figsize =(10, 5))
+fig1.subplots_adjust(wspace=0.35)
 
 ax1.bar(x - width/2, counts_mhc, width, color= 'steelblue', label= 'Mental health')
 ax1.bar(x + width/2, counts_phc, width, color= 'lightblue', label ='Physical health')
@@ -539,10 +612,10 @@ ax2.bar(label_vs, counts_vs, color ='steelblue', label=label_vs)
 
 
 # Labels, ticks 
-ax1.set_xlabel("Answers", labelpad= 13.0, fontname="Arial", fontsize=11, fontweight = 'medium')
-ax1.set_ylabel("Percentages", labelpad= 13.0, fontname="Arial", fontsize=11, fontweight = 'medium')
-ax2.set_xlabel("Answers", labelpad= 13.0, fontname="Arial", fontsize=11, fontweight = 'medium')
-ax2.set_ylabel("Percentages", labelpad= 13.0, fontname="Arial", fontsize=11, fontweight = 'medium')
+ax1.set_xlabel("Answers", labelpad= 13.0, fontname="Arial", fontsize=12, fontweight = 'medium')
+ax1.set_ylabel("Percentages", labelpad= 13.0, fontname="Arial", fontsize=12, fontweight = 'medium')
+ax2.set_xlabel("Answers", labelpad= 13.0, fontname="Arial", fontsize=12, fontweight = 'medium')
+ax2.set_ylabel("Percentages", labelpad= 13.0, fontname="Arial", fontsize=12, fontweight = 'medium')
 ax1.set_xticks(x, labels)
 ax1.set_yticks(np.arange(0.0, 1.1, 0.1))
 ax2.set_yticks(np.arange(0.0, 1.1, 0.1))
@@ -550,29 +623,59 @@ ax2.set_yticks(np.arange(0.0, 1.1, 0.1))
 # Percentages
 for p in ax1.patches:
    height = p.get_height() 
-   ax1.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center')
+   ax1.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 10, fontweight = 'bold')
 
 for p in ax2.patches:
    height = p.get_height() 
-   ax2.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center')
+   ax2.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 10, fontweight = 'bold')
 
 # Titles
-ax1.set_title("Negative consequences of discussing of Mental \nand Physical health with Employer", fontsize= 13, fontweight= 'heavy', color = 'black', y=1.1, pad=10)
-ax2.set_title("Seriousness of mental and physical illness compared", fontsize= 13, fontweight= 'heavy', color = 'black', y=1.1, pad=10)
+ax1.set_title("Negative consequences of discussing of \nMental and Physical health with Employer", fontsize= 13, fontweight= 'heavy', color = 'black', y=1.1, pad=10)
+ax2.set_title("Seriousness of mental \nand physical illness compared", fontsize= 13, fontweight= 'heavy', color = 'black', y=1.1, pad=10)
 
 # Legend
-ax1.legend(title = 'Type of health', loc = 'upper right', bbox_to_anchor=(0.65, 0.55, 0.5, 0.5))
+ax1.legend(title = 'Type of health', loc = 'upper right', bbox_to_anchor=(0.55, 0.55, 0.5, 0.5))
 
 # Show
-st.subheader("Consequence of discussion of mental and physical health with the employer")
+st.subheader("Negative consequences of discussion of mental and physical health with the employer")
 st.pyplot(fig1)
-st.text("\n\n")
+
+with st.expander("Learn more"):
+    tab1, tab2 =  st.tabs(["Explanation", "Tables"])
+
+    with tab1:
+         st.write('''
+            The **first plot** compares the resoponses to these 2 question:
+            1. "*Do you think that discussing a mental health issue with your employer would have negative consequences?*"
+            2. "*Do you think that discussing a physical health issue with your employer would have negative consequences?*"
+            
+            We see that the about the 74% of respondents don't think that discussing a physical health issue would have negative consequences, while only 39% have the same thought for the mental health.
+            Infact we see that there is more indecision among the respondents for the mental health category.
+
+            This highlights how differently mental and physical health are seen and treated. Keeping in mind that this survey took place in 2014, we could say that there are still prejudices on mental health issues in our society, because they are "invisible" and more complex to undestrand. 
+            Often there is a stigma against those who suffer of mental health issues, because they are considered weird and dangerous. All of these reasons may therefore explain how talking about a mental problem with the employer could be a negative action.
+
+            The **second plot** shows the respondent's answer to the question: *"Do you feel that your employer takes mental health as seriously as physical health?"*
+                - this should be a direct way to understand what we tried to infer above
+                - unfortunately plot is not very informative since about the half of the responses were 'I don't know'
+        ''')
+    with tab2:
+        st.write('Mental health consequences')
+        st.dataframe(df_mhc)
+        st.write('Physical health consequences')
+        st.dataframe(df_phc)
+        st.write('Second graph')
+        st.dataframe(df_vs)
+
+st.text("\n")
+st.text("\n")
 
 
 # BENEFITS, WELNESS PROGRAM AND NUMBER OF EMPLOYEES
 # 1
 labels_ben = mental_health_df['benefits'].value_counts().index.to_list()               # 'Yes', "Don't know", 'No'
 counts_ben = list(map(lambda x: round((x/tot_rows),2), mental_health_df['benefits'].value_counts()))
+df_benefits = pd.DataFrame({'Benefits for mental health': labels_ben, 'Counts': mental_health_df['benefits'].value_counts().values})
 
 # 2
 labels_no = [ '1-5', '6-25','26-100',  '100-500' , '500-1000',  'More than 1000']
@@ -589,7 +692,7 @@ width = 0.2  # the width of the bars
 
 # Plots
 fig1, (ax1, ax2)= plt.subplots(1, 2, figsize =(15, 5))
-fig1.subplots_adjust(wspace=0.3)
+fig1.subplots_adjust(wspace=0.2)
 ax1.bar(labels_ben, counts_ben, color ='steelblue', label=labels_ben)
 ax2.bar(x - 0.2, yes_perc1, width, color= 'steelblue', label= 'Yes')
 ax2.bar(x, no_perc1, width, color= 'lightblue', label ='No')
@@ -607,15 +710,15 @@ ax2.set_yticks(np.arange(0.0,1.1, 0.1))
 # Percenteges
 for p in ax1.patches:
     height = p.get_height()
-    ax1.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center')
+    ax1.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 14, fontweight = 'bold')
 
 for p in ax2.patches:
     height = p.get_height()
-    ax2.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize=8)
+    ax2.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize=8, fontweight = 'bold')
 
 # Title
 ax1.set_title('Commission of mental health benefits', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
-ax2.set_title('Number of employees and commission of mental health benefits', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
+ax2.set_title('Number of employees and commission \nof mental health benefits', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
 
 # Legend
 ax2.legend(title = 'Mental health benefits', loc = 'upper right', bbox_to_anchor=(0.65, 0.60, 0.5, 0.5))
@@ -624,6 +727,7 @@ ax2.legend(title = 'Mental health benefits', loc = 'upper right', bbox_to_anchor
 # 3
 labels_well = mental_health_df['wellness_program'].value_counts().reindex(labels_ben).index.to_list()          #'Yes', "Don't know", 'No'
 counts_well = list(map(lambda x: round((x/tot_rows),2), mental_health_df['wellness_program'].value_counts().reindex(labels_well))) 
+df_welness = pd.DataFrame({'Mental health as welness program': labels_well, 'Counts': mental_health_df['wellness_program'].value_counts().reindex(labels_well).values})
 
 # 4
 df_no_well = mental_health_df.groupby(['no_employees', 'wellness_program'])['wellness_program'].count().unstack(0)
@@ -637,16 +741,18 @@ x = np.arange(len(labels_no))
 width = 0.2  # the width of the bars
 
 # Plot
-fig2, (ax3, ax4)= plt.subplots(1, 2, figsize =(17, 5))
-fig2.subplots_adjust(wspace=0.3)
+fig2, (ax3, ax4)= plt.subplots(1, 2, figsize =(15, 5))
+fig2.subplots_adjust(wspace=0.2)
 ax3.bar(labels_well, counts_well, color ='steelblue', label=labels_well)
 ax4.bar(x - 0.2, yes_perc2, width, color= 'steelblue', label= 'Yes')
 ax4.bar(x, no_perc2, width, color= 'lightblue', label ='No')
 ax4.bar(x + 0.2, idk_perc2, width, color= 'lightsteelblue', label ='Don\'t know')
 
-# Labels, ticks 
+# Labels, ticks
+ax3.set_xlabel("Wellness program", labelpad= 30.0, fontname="Arial", fontsize=12, fontweight = 'medium')
+ax4.set_xlabel("Number of employees", labelpad= 10.0, fontname="Arial", fontsize=12, fontweight = 'medium') 
 ax3.set_ylabel("Percentages", labelpad= 10.0, fontname="Arial", fontsize=12, fontweight = 'medium')
-ax3.set_ylabel("Percentages", labelpad= 10.0, fontname="Arial", fontsize=12, fontweight = 'medium')
+ax4.set_ylabel("Percentages", labelpad= 10.0, fontname="Arial", fontsize=12, fontweight = 'medium')
 ax4.set_xticks(list(range(0,6)), labels_no, rotation = 30, ha='right')
 ax3.set_yticks(np.arange(0.0,1.1, 0.1))
 ax4.set_yticks(np.arange(0.0,1.1, 0.1))
@@ -654,11 +760,11 @@ ax4.set_yticks(np.arange(0.0,1.1, 0.1))
 # Perc
 for p in ax3.patches:
     height = p.get_height()
-    ax3.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center')
+    ax3.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 14, fontweight = 'bold')
 
 for p in ax4.patches:
     height = p.get_height()
-    ax4.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize=8)
+    ax4.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize=8, fontweight = 'bold')
 
 # Titles
 ax3.set_title('Mental health as part of an employee wellness program', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
@@ -671,7 +777,42 @@ ax4.legend(title = 'Mental health benefits', loc = 'upper right', bbox_to_anchor
 st.subheader("Benefits, wellness program and number of employees")
 st.pyplot(fig1)
 st.pyplot(fig2)
-st.text("\n\n")
+with st.expander("Learn more"):
+    tab1, tab2 =  st.tabs(["Explanation", "Tables"])
+
+    with tab1:
+         st.write('''
+            The **first plot** was the respondent's answer to the question, *"Does your employer provide mental health benefits?"*
+
+            - Only the 38% of the respondents said that their employer provided them mental health benefits
+
+
+            The **third plot** shows the respondents answer to the question, *"Has your employer ever discussed mental health as part of an employee wellness program?"*.
+
+            - we see that unfortunately around the 67% say that there aren't any wellness programs provided by their company. This data is coherent with what we noted above, and shows that the companies need to increase the focus on mental health.
+
+            In the **second** and **fourth** plots i compare these 2 attributes with the number of employees of the companies. I preferred plotting the percentages of "Yes", "No" and "Don't know" answers of each range of number of employees,  instead of reporting the counts. Infact, normalizing the output, it's easier to attempt some deductions:
+
+            - in the second plot, with the increasing of employees, there is an increse of respondents saying that their employer provided them mental health benefits. Simultaneously there is a decrease, from the third label, of respondents saying the contrary (aka: their employer didn't provide them mental health benefits )
+
+            - in the fourth plot the number of *"Don't know"* is pretty high, so it's more diffucult to infer something. However we see that there is about the same trend, so with the increas of employees, the number of people who claim that their company provide wellness programs is higher than the number of people who claim the contrary.
+
+            *So what do these two graphs mean?*
+            Maybe with the increase in the number of employees, so with bigger company, more emphasis is placed on mental health care. This also makes sense because in smaller companies the climate may be more relaxed, less competitive, and more "comfortable" than in large tech companies.       
+        ''')
+
+    with tab2:
+        st.write('First graph')
+        st.dataframe(df_benefits)
+        st.write('Second graph')
+        st.dataframe(df_no_ben)
+        st.write('Third graph')
+        st.dataframe(df_welness)
+        st.write('Fourth graph')
+        st.dataframe(df_no_well)
+
+st.text("\n")
+st.text("\n")
 
 
 # DISCUSSING OF MENTAL HEALTH ISSUE WITH COWORKERS AND SUPERVISOR
@@ -682,6 +823,9 @@ sup = mental_health_df['supervisor'].value_counts()
 labels = co.index.to_list()                 
 counts_co = list(map(lambda x: round((x/tot_rows),2), co))
 counts_sup = list(map(lambda x: round((x/tot_rows),2), sup))
+
+df_co = pd.DataFrame({'Discussing with coworkers': labels, 'Counts': co.values})
+df_sup = pd.DataFrame({'Discussing with supervisors': labels, 'Counts': sup.values})
   
 # The label locations
 x = np.arange(len(labels))  
@@ -693,18 +837,18 @@ ax1.bar(x - width/2, counts_co, width, color= 'steelblue', label= 'Coworkers')
 ax1.bar(x + width/2, counts_sup, width, color= 'lightblue', label ='Supervisor')
 
 # Labels, ticks 
-ax1.set_xlabel("Answers", labelpad= 13.0, fontname="Arial", fontsize=11, fontweight = 'medium')
-ax1.set_ylabel("Percentages", labelpad= 13.0, fontname="Arial", fontsize=11, fontweight = 'medium')
+ax1.set_xlabel("Answers", labelpad= 13.0, fontname="Arial", fontsize=12, fontweight = 'medium')
+ax1.set_ylabel("Percentages", labelpad= 13.0, fontname="Arial", fontsize=12, fontweight = 'medium')
 ax1.set_xticks(x, labels)
 ax1.set_yticks(np.arange(0.0, 1.1, 0.1))
 
 # Percentages
 for p in ax1.patches:
    height = p.get_height() 
-   ax1.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center')
+   ax1.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 12, fontweight = 'bold')
 
 # Titles
-ax1.set_title("Discussing of Mental and Physical health issues\n with coworkers and supervisors", fontsize= 13, fontweight= 'heavy', color = 'black', y=1.1, pad=10)
+ax1.set_title("Discussing of Mental and Physical health issues with coworkers and supervisors", fontsize= 13, fontweight= 'heavy', color = 'black', y=1.1, pad=10)
 
 # Legend
 ax1.legend(title = 'Type of colleague', loc = 'upper right', bbox_to_anchor=(0.65, 0.55, 0.5, 0.5))
@@ -712,7 +856,30 @@ ax1.legend(title = 'Type of colleague', loc = 'upper right', bbox_to_anchor=(0.6
 # Show
 st.subheader("Discussing of Mental health issues with coworkers and supervisors")
 st.pyplot(fig1)
-st.text("\n\n")
+
+with st.expander("Learn more"):
+    tab1, tab2 =  st.tabs(["Explanation", "Tables"])
+
+    with tab1:
+         st.write('''
+        This is the respondent's answer to the questions:
+        1. *"Would you be willing to discuss a mental health issue with your coworkers?"* 
+        2. *"Would you be willing to discuss a mental health issue with your direct supervisor(s)?"*
+
+        With this is plot is possibile to compare the responses of the same type of question, but with 2 different subjects. 
+
+        - We see that for the supervisor's question, the majority of individuals answer *"Yes", perhaps because the respondents think that the supervisor should know about these problems.   
+
+        - With colleagues, on the other hand, a more confidential bond is usually established, so the choice to talk about one's problems is more personal. Infact about 62% of the respondents answer that they would like to discuss their issues with some of the coworkers, as it's common to talk about personal problems with some friends and not with other acquaintances.
+        ''')
+
+    with tab2:
+        st.dataframe(df_co)
+        st.dataframe(df_sup)
+
+st.text("\n")
+st.text("\n")
+
 
 
 # CONVERTING CATEGORICAL VALUES
@@ -736,7 +903,8 @@ ax1.set_title("Heat map of the dataset", fontsize= 22, fontweight= 'heavy', colo
 # Show
 st.subheader("Heatmap")
 st.pyplot(fig1)
-st.text("\n\n")
+st.text("\n")
+st.text("\n")
 
 
 ### MODELS ###
@@ -745,6 +913,8 @@ st.header('Classification Model')
 # CLASSIFCATION - Target : treatment 
 st.subheader('Parameters')
 st.write('Here we run model to predict if a person should be treated for a mental health condition according to the values in the dataset.')
+st.write('Remeber that searching and being subjected to this type of treatment implies suffering of some kind of mental health disease, but it is also possible that someone have a mental health issue but he didn\'t search for a treatment, so the response *"No"* don\'t always indicate a healthy individual. By this point of view some labels could be misleading.')
+st.text('\n\n')
 
 # Classifiers
 names = ['Nearest Neighbors', 'Linear SVM', 'Decision Tree', 'Random Forest', 'AdaBoost', 'Gradient Tree Boosting', 'Gaussian Naive Bayes' , 'QDA']
