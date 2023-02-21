@@ -25,7 +25,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
 
-### FUNCTIONS ###A
+###----------------------------------------------------------  FUNCTIONS -----------------------------------------------------------###
 @st.cache(allow_output_mutation = True)
 def get_data(url):
     mental_health_df_raw = pd.read_csv(url)
@@ -98,7 +98,7 @@ to support mental wellness in the tech and open source communities.')
 st.text("\n\n")
 st.text("\n\n")
 
-### EXPLORATION AND CLEANING OF THE DATASET ###
+###------------------------------------------- EXPLORATION AND CLEANING OF THE DATASET ---------------------------------------------------###
 st.header('Content')
 
 # THE DATASET
@@ -290,15 +290,16 @@ st.text("\n\n")
 st.header("Download data")
 st.download_button('Download raw dataset', get_downloadable_data(mental_health_df_static_raw), file_name = 'survey.csv')
 st.download_button('Download the clean dataset', get_downloadable_data(mental_health_df_static_clean), file_name = 'survey_clean.csv')
-st.write('Dataset source: [click link]('+ url +')')
+url_kaggle = 'https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey'
+st.write('Dataset on Kaggle: [click link]('+ url_kaggle +')')
 st.text("\n\n")
 st.text("\n\n")
 
-
-### INTERESTING PLOTS ###
+###-------------------------------------------------------- INTERESTING PLOTS --------------------------------------------------------------###
 st.header("Interesting plots")
-st.write('''Some graphs about the data just presented are shown.
-            In each graph one or more attributes of the dataset are represented, as indicated by the various subheaders''')
+st.write('''Some graphs about the data are shown.
+            In each graph one or more attributes of the dataset are represented, as indicated by the various subheaders.
+            If you want to better understand the charts and the data they present, see the *"Learn more"* expaneders for each group of graphs.''')
 st.text("\n")
 
 # USEFUL CODE
@@ -429,17 +430,23 @@ with st.expander("Learn more"):
         - The **first plot** shows the answers to the question, *"Have you sought treatment for a mental health condition?"*.
         - The **second plot** shows respondent's answer to the question, *"If you have a mental health condition, do you feel that it interferes with your work?"*.
             - It may not be so simple for the interviewed to admit a mental health condtion and the interference of it with the work, so the *"Sometimes"* response and *"Rarely"* could be vague answers.
+            - Remeber that i have replaced the NaN values with *"Don't know"*.
         - The **third plot** shows counts of people who have sought or not a treatment among each response of the previous graph.
-            - we see that the people who chose *"Sometimes"* had the highest number of people who actually have sought a treatment for mental health condition. Similar pattern was shown for the people who belonged to the *"Often category"*. Even if the answer was *"Sometimes"* (for the reasons stated above), a lot of people still decided to get help.
+            - we see that the answer *"Sometimes"* had the highest number of people who actually have sought a treatment for mental health condition. Similar pattern was shown for the people who belonged to the *"Often category"*. Even if the answer was *"Sometimes"* (for the reasons stated above), a lot of people still decided to get help.
             - unexpectedly, for people whose mental health *"Never"* has interfered at work, a small percentage still wanted to get treatment. It can be given by a variety of reasons like personal needs, a good capacity of keeping personal life and work spaced out or a preventive gesture.
             - practically all of the respondent that didn't answer to the question (the *don't know* category) aren't seeking a treatment for mental health condition. So probably these people do not suffer from mental illness. Another assumption is that they could be reticent to search a treatment.
         ''')
 
     with tab2:
-        st.write('First graph')
-        st.dataframe(df_treat)
-        st.write('Second graph')
-        st.dataframe(df_work)
+        col1, col2= st.columns(2)
+
+        with col1:
+            st.write('First graph')
+            st.dataframe(df_treat)
+        with col2:
+            st.write('Second graph')
+            st.dataframe(df_work)
+
         st.write('Third graph')
         st.dataframe(df_treat_work)
 
@@ -480,8 +487,8 @@ ax2.set_ylabel("Remote work", labelpad= 10.0, fontname="Arial", fontsize=12, fon
 ax2.set_xticks(list(range(0,5)), labels_work, rotation=30, ha='right')
 
 # Titles
-ax1.set_title('Working remotely', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
-ax2.set_title('Work interference of mental \nhealth condition and working type', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
+ax1.set_title('Employees who work remotely', fontsize= 15, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
+ax2.set_title('Work interference of mental \nhealth condition and working type', fontsize= 15, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
 
 # Legend
 ax1.legend(wedges, labels_rw,
@@ -499,9 +506,9 @@ with st.expander("Learn more"):
          st.write('''
             - The **first plot** shows the answers to the question, *"Do you work remotely (outside of an office) at least 50% of the time?"*
             - To better understand if the are correlations between the type of working and the interference of a possible mental health 
-              condition with the work, there is the **second plot**.
-                - For every answer, the percentage of people who work in the office is bigger (obviously, given the result of the first plot).
-                - If we compute the percentages of people who work remotly and in the office for every answer, we find roughly the same percentages (about 30% work remotely and the other 70% in the offic), so there are no particular values to be highlighted.
+              condition with the work, there is the **second plot**:
+                - For every answer, the percentage of people who work in the office is bigger.
+                - If we compute the percentages of people who work remotly and in the office for every answer, we find roughly the same percentages (about 30% work remotely and the other 70% in the office), so there are no particular values to be highlighted.
         ''')
 
     with tab2:
@@ -567,20 +574,25 @@ with st.expander("Learn more"):
             - The **first plot** shows the answer to the question, *"Do you have a family history of mental illness?"*.
             - The **second plot** shows the counts of respondents who have sought a treatment, given that they came from a family with or without a history in mental illness.
                 - among who have a family history, the 74 % have sought a treatment while for the ones that don't have a family history, only the 35% have searched treatments.
-                - this means that peoople who have had cases of mental illness in the family pay more attention to this a topic. Infact, when it comes to mental health/brain health, the family history matters.
+                - this could mean that peoople who have had cases of mental illness in the family pay more attention to this a topic. Infact, when it comes to mental health, the family history matters.
         ''')
 
     with tab2:
-        st.write('First graph')
-        st.dataframe(df_family)
-        st.write('Second graph')
-        st.dataframe(df_family_treat)
+        col1, col2= st.columns(2)
+
+        with col1:
+            st.write('First graph')
+            st.dataframe(df_family)
+        
+        with col2:
+            st.write('Second graph')
+            st.dataframe(df_family_treat)
 
 st.text("\n")
 st.text("\n")
 
 
-# CONSEQUENCE OF DISCUSSION OF MENTAL AND PHYSICAL HEALTH WITH THE EMPLOYER
+# MENTAL VS PHYSICAL HEALTH
 # Data
 # 1
 mhc = mental_health_df['mental_health_consequence'].value_counts().reindex(index= mental_health_df['mental_health_consequence'].value_counts().index[::-1])
@@ -630,14 +642,14 @@ for p in ax2.patches:
    ax2.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 10, fontweight = 'bold')
 
 # Titles
-ax1.set_title("Negative consequences of discussing of \nMental and Physical health with Employer", fontsize= 13, fontweight= 'heavy', color = 'black', y=1.1, pad=10)
+ax1.set_title("Negative consequences of discussing of Mental\n and Physical health issues with the employer", fontsize= 13, fontweight= 'heavy', color = 'black', y=1.1, pad=10)
 ax2.set_title("Seriousness of mental \nand physical illness compared", fontsize= 13, fontweight= 'heavy', color = 'black', y=1.1, pad=10)
 
 # Legend
 ax1.legend(title = 'Type of health', loc = 'upper right', bbox_to_anchor=(0.55, 0.55, 0.5, 0.5))
 
 # Show
-st.subheader("Negative consequences of discussion of mental and physical health with the employer")
+st.subheader("Mental vs physical health")
 st.pyplot(fig1)
 
 with st.expander("Learn more"):
@@ -656,8 +668,8 @@ with st.expander("Learn more"):
             Often there is a stigma against those who suffer of mental health issues, because they are considered weird and dangerous. All of these reasons may therefore explain how talking about a mental problem with the employer could be a negative action.
 
             The **second plot** shows the respondent's answer to the question: *"Do you feel that your employer takes mental health as seriously as physical health?"*
-                - this should be a direct way to understand what we tried to infer above
-                - unfortunately plot is not very informative since about the half of the responses were 'I don't know'
+            - this should be a direct way to understand what we tried to infer above.
+            - unfortunately plot is not very informative since about the half of the responses were *"I don't know"*
         ''')
     with tab2:
         st.write('Mental health consequences')
@@ -679,35 +691,47 @@ df_benefits = pd.DataFrame({'Benefits for mental health': labels_ben, 'Counts': 
 
 # 2
 labels_no = [ '1-5', '6-25','26-100',  '100-500' , '500-1000',  'More than 1000']
+counts_no = list(map(lambda x: round((x/tot_rows),2), mental_health_df['no_employees'].value_counts().reindex(labels_no)))
+df_no = pd.DataFrame({'Number of employees': labels_no, 'Counts':mental_health_df['no_employees'].value_counts().reindex(labels_no).values})
 
 df_no_ben = mental_health_df.groupby(['no_employees', 'benefits'])['benefits'].count().unstack(0)
 df_no_ben = df_no_ben.reindex(index = labels_ben , columns= labels_no)
 yes_perc1 = percent(df_no_ben, 'Yes')
-no_perc1 = percent(df_no_ben, 'Don\'t know')
-idk_perc1 = percent(df_no_ben, 'No')
+no_perc1 = percent(df_no_ben, 'No')
+idk_perc1 = percent(df_no_ben, 'Don\'t know')
 
 # The label locations
 x = np.arange(len(labels_no))  
 width = 0.2  # the width of the bars
 
 # Plots
+fig0, ax0 = plt.subplots(figsize =(8, 3))
 fig1, (ax1, ax2)= plt.subplots(1, 2, figsize =(15, 5))
 fig1.subplots_adjust(wspace=0.2)
+
+ax0.bar(labels_no, counts_no, color ='steelblue', label=labels_no)
 ax1.bar(labels_ben, counts_ben, color ='steelblue', label=labels_ben)
 ax2.bar(x - 0.2, yes_perc1, width, color= 'steelblue', label= 'Yes')
 ax2.bar(x, no_perc1, width, color= 'lightblue', label ='No')
 ax2.bar(x + 0.2, idk_perc1, width, color= 'lightsteelblue', label ='Don\'t know')
 
 # Labels, ticks 
+ax0.set_xlabel("Number of employees", labelpad= 10.0, fontname="Arial", fontsize=12, fontweight = 'medium')
 ax1.set_xlabel("Benefits", labelpad= 30.0, fontname="Arial", fontsize=12, fontweight = 'medium')
 ax2.set_xlabel("Number of employees", labelpad= 10.0, fontname="Arial", fontsize=12, fontweight = 'medium')
+ax0.set_ylabel("Percentages", labelpad= 10.0, fontname="Arial", fontsize=12, fontweight = 'medium')
 ax1.set_ylabel("Percentages", labelpad= 10.0, fontname="Arial", fontsize=12, fontweight = 'medium')
 ax2.set_ylabel("Percentages", labelpad= 10.0, fontname="Arial", fontsize=12, fontweight = 'medium')
 ax2.set_xticks(list(range(0,6)), labels_no, rotation = 30, ha='right')
+ax0.set_yticks(np.arange(0.0,1.1, 0.1))
 ax1.set_yticks(np.arange(0.0,1.1, 0.1))
 ax2.set_yticks(np.arange(0.0,1.1, 0.1))
 
 # Percenteges
+for p in ax0.patches:
+    height = p.get_height()
+    ax0.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 14, fontweight = 'bold')
+
 for p in ax1.patches:
     height = p.get_height()
     ax1.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 14, fontweight = 'bold')
@@ -717,6 +741,7 @@ for p in ax2.patches:
     ax2.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize=8, fontweight = 'bold')
 
 # Title
+ax0.set_title('Number of employees of a company', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
 ax1.set_title('Commission of mental health benefits', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
 ax2.set_title('Number of employees and commission \nof mental health benefits', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
 
@@ -733,8 +758,8 @@ df_welness = pd.DataFrame({'Mental health as welness program': labels_well, 'Cou
 df_no_well = mental_health_df.groupby(['no_employees', 'wellness_program'])['wellness_program'].count().unstack(0)
 df_no_well = df_no_well.reindex(index =labels_well , columns= labels_no)
 yes_perc2 = percent(df_no_well, 'Yes')
-no_perc2 = percent(df_no_well, 'Don\'t know')
-idk_perc2 = percent(df_no_well, 'No')
+no_perc2 = percent(df_no_well, 'No')
+idk_perc2 = percent(df_no_well, 'Don\'t know')
 
 # The label locations
 x = np.arange(len(labels_no))  
@@ -760,7 +785,7 @@ ax4.set_yticks(np.arange(0.0,1.1, 0.1))
 # Perc
 for p in ax3.patches:
     height = p.get_height()
-    ax3.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 14, fontweight = 'bold')
+    ax3.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 12, fontweight = 'bold')
 
 for p in ax4.patches:
     height = p.get_height()
@@ -768,46 +793,78 @@ for p in ax4.patches:
 
 # Titles
 ax3.set_title('Mental health as part of an employee wellness program', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
-ax4.set_title('Number of employees and Mental health as part of an \nemployee wellness program', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.10, pad=10)
+ax4.set_title('Number of employees and mental health as part of an \nemployee wellness program', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.10, pad=10)
 
 # Legend
 ax4.legend(title = 'Mental health benefits', loc = 'upper right', bbox_to_anchor=(0.65, 0.60, 0.5, 0.5))
 
 # Show
 st.subheader("Benefits, wellness program and number of employees")
+
+col1, col2 = st.columns([2, 1], gap = "medium") 
+
+with col1: 
+    st.pyplot(fig0)
+with col2:
+   st.dataframe(df_no)
+
+with st.expander("Learn more"):
+    st.write('The plot shows the respondent\'s answer to the question, *"How many employees does your company or organization have?"*')
+    
+st.text("\n")
+st.text("\n")
+
 st.pyplot(fig1)
 st.pyplot(fig2)
+
 with st.expander("Learn more"):
     tab1, tab2 =  st.tabs(["Explanation", "Tables"])
 
     with tab1:
-         st.write('''
+        st.write('''
             The **first plot** was the respondent's answer to the question, *"Does your employer provide mental health benefits?"*
 
             - Only the 38% of the respondents said that their employer provided them mental health benefits
-
-
+            ''')
+        st.text("\n")
+        st.write('''
             The **third plot** shows the respondents answer to the question, *"Has your employer ever discussed mental health as part of an employee wellness program?"*.
 
-            - we see that unfortunately around the 67% say that there aren't any wellness programs provided by their company. This data is coherent with what we noted above, and shows that the companies need to increase the focus on mental health.
+            - we see that unfortunately around the 67% say that there aren't any wellness programs provided by their company. This data is coherent with what we noted above, and shows that the companies need to increase the focus on mental health.''')
+        st.text("\n")
+        st.write('''
+            In the **second** and **fourth** plots i compare these 2 attributes with the number of employees of the companies. I preferred plotting the percentages of "Yes", "No" and "Don't know" answers of each range of number of employees, instead of reporting the counts. 
+            Infact, normalizing the output, it's easier to attempt some deductions:
 
-            In the **second** and **fourth** plots i compare these 2 attributes with the number of employees of the companies. I preferred plotting the percentages of "Yes", "No" and "Don't know" answers of each range of number of employees,  instead of reporting the counts. Infact, normalizing the output, it's easier to attempt some deductions:
+            - in the second plot, with the increasing of employees, there is an increse of respondents saying that their employer provided them mental health benefits. 
+              Simultaneously there is a decrease of respondents saying the contrary (aka: their employer didn't provide them mental health benefits )
 
-            - in the second plot, with the increasing of employees, there is an increse of respondents saying that their employer provided them mental health benefits. Simultaneously there is a decrease, from the third label, of respondents saying the contrary (aka: their employer didn't provide them mental health benefits )
-
-            - in the fourth plot the number of *"Don't know"* is pretty high, so it's more diffucult to infer something. However we see that there is about the same trend, so with the increas of employees, the number of people who claim that their company provide wellness programs is higher than the number of people who claim the contrary.
+            - in the fourth plot the number of *"Don't know"* is less for each label, while the people who answer no is pretty high for every category of range of numbers. 
+              We see that there more or less the same trend as the second plot: with the increase of employees there is a decrese of the *"No"* answer. 
+              But, unlike before, the percentege of *"No"* always overcomes the percentege of *"Yes"* (except for the last category)
 
             *So what do these two graphs mean?*
-            Maybe with the increase in the number of employees, so with bigger company, more emphasis is placed on mental health care. This also makes sense because in smaller companies the climate may be more relaxed, less competitive, and more "comfortable" than in large tech companies.       
+            Maybe with the increase in the number of employees, so with bigger company, more emphasis is placed on mental health care. 
+            This also makes sense because in smaller companies the climate may be more relaxed, less competitive, and more "comfortable" than in large tech companies. 
+            This interpretation can be viewed both positively and negatively; in the former case, smaller companies might have fewer cases of mental illness for, in the latter case, precisely because the climate is more "confidential," 
+            certain issues might emerge more hardly and be taken less seriously.
+
+            We see this trend more in the second graph than in the fourth, which reports a deficiency in mental health care common both for small, medium and big companies. 
         ''')
 
     with tab2:
-        st.write('First graph')
-        st.dataframe(df_benefits)
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.write('First graph')
+            st.dataframe(df_benefits)
+
+        with col2:
+            st.write('Third graph')
+            st.dataframe(df_welness)
+        
         st.write('Second graph')
         st.dataframe(df_no_ben)
-        st.write('Third graph')
-        st.dataframe(df_welness)
         st.write('Fourth graph')
         st.dataframe(df_no_well)
 
@@ -861,21 +918,27 @@ with st.expander("Learn more"):
     tab1, tab2 =  st.tabs(["Explanation", "Tables"])
 
     with tab1:
-         st.write('''
+        st.write('''
         This is the respondent's answer to the questions:
         1. *"Would you be willing to discuss a mental health issue with your coworkers?"* 
         2. *"Would you be willing to discuss a mental health issue with your direct supervisor(s)?"*
-
+        ''')
+        st.text('\n')
+        st.write('''
         With this is plot is possibile to compare the responses of the same type of question, but with 2 different subjects. 
 
-        - We see that for the supervisor's question, the majority of individuals answer *"Yes", perhaps because the respondents think that the supervisor should know about these problems.   
+        - We see that for the supervisor's question, the majority of individuals answer *"Yes"*, perhaps because the respondents think that the supervisor should know about these problems.   
 
         - With colleagues, on the other hand, a more confidential bond is usually established, so the choice to talk about one's problems is more personal. Infact about 62% of the respondents answer that they would like to discuss their issues with some of the coworkers, as it's common to talk about personal problems with some friends and not with other acquaintances.
         ''')
 
     with tab2:
-        st.dataframe(df_co)
-        st.dataframe(df_sup)
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.dataframe(df_co)
+        with col2:
+            st.dataframe(df_sup)
 
 st.text("\n")
 st.text("\n")
@@ -907,12 +970,13 @@ st.text("\n")
 st.text("\n")
 
 
-### MODELS ###
+###---------------------------------------------------------- MODELS ------------------------------------------------------------------###
 st.header('Classification Model')
 
 # CLASSIFCATION - Target : treatment 
 st.subheader('Parameters')
-st.write('Here we run model to predict if a person should be treated for a mental health condition according to the values in the dataset.')
+st.write('''Here we run model to predict if a person have sought a treatment for a mental health condition (and so if he/she suffers from any mental illness ). 
+            Is possible to choose between different models, features and test size, in order to find  the best predictors.''')
 st.write('Remeber that searching and being subjected to this type of treatment implies suffering of some kind of mental health disease, but it is also possible that someone have a mental health issue but he didn\'t search for a treatment, so the response *"No"* don\'t always indicate a healthy individual. By this point of view some labels could be misleading.')
 st.text('\n\n')
 
