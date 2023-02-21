@@ -13,5 +13,5 @@ The folder contains:
 - the raw dataset (*survey.csv*)
 - the clean dataset (*survey_clean.csv*)
 - some useful files for the project like the *eu_states.csv* and *corr_values.png*
-- the main file project.py
-- the jupyter notebook of the project, which also contain some parts that aren't present in the final version .py
+- the main file project.py, that is the final version of the project
+- the jupyter notebook of the project, which also contain some parts that aren't present in the final version *project.py*
