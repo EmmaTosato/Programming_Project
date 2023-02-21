@@ -296,7 +296,7 @@ st.text("\n\n")
 st.text("\n\n")
 
 
-###-------------------------------------------------------- INTERESTING PLOTS --------------------------------------------------------------###
+###------------------------------------------------- INTERESTING PLOTS and OTHER EXPLORATIONS -----------------------------------------------------------###
 st.header("Interesting plots")
 st.write('''Some graphs about the data are shown.
             In each graph one or more attributes of the dataset are represented, as indicated by the various subheaders.
