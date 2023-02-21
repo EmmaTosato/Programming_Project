@@ -297,10 +297,11 @@ st.text("\n\n")
 
 
 ###------------------------------------------------- INTERESTING PLOTS and OTHER EXPLORATIONS -----------------------------------------------------------###
-st.header("Interesting plots")
+st.header("Interesting plots and data")
 st.write('''Some graphs about the data are shown.
             In each graph one or more attributes of the dataset are represented, as indicated by the various subheaders.
-            If you want to better understand the charts and the data they present, see the *"Learn more"* expaneders for each group of graphs.''')
+            If you want to better understand the charts, see the *"Learn more"* expaneders for each group of graphs. 
+            You will find an explanation of the charts and the data they present.''')
 st.text("\n")
 
 # Useful data
