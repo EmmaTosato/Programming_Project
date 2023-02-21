@@ -25,7 +25,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
 
-###----------------------------------------------------------  FUNCTIONS -----------------------------------------------------------###
+###-------------------------------------------------------------  FUNCTIONS -------------------------------------------------------------------###
 @st.cache(allow_output_mutation = True)
 def get_data(url):
     mental_health_df_raw = pd.read_csv(url)
@@ -83,11 +83,10 @@ def encoding(mental_health_df):
 
 
 
-### TITLE AND CONTEXT ###
+###-----------------------------------------------------------TITLE AND CONTEXT---------------------------------------------------------------###
 st.title('A mental health survey')
 st.write('Programming for Data Science : final project.')
 st.text("\n\n")
-
 st.header('Dataset Information')
 st.write('''
 This dataset is from a 2014 survey that measures attitudes towards mental health and frequency of mental health disorders 
@@ -113,7 +112,6 @@ mental_health_df_raw.info()
 # Streamlit
 st.write('''Each column (or attribute) in the dataset contains the responses of each respondent to a specific question. 
             The first questions are both general in nature, while the following questions address the main theme of this survey.''')
-
 with st.expander("Expand for the specific content of each column"):
     st.write('''
         * **Timestamp:** contains date, month, year and time
@@ -175,6 +173,7 @@ st.write('''
 
 # CONVERTING THE COLUMN'S NAME TO LOWERCASE CHARACTERS
 mental_health_df_raw.columns = mental_health_df_raw.columns.map(str.lower)
+
 
 # DROPPING COLUMNS
 mental_health_df_raw.isnull().sum()
@@ -244,7 +243,7 @@ mental_health_df_raw['self_employed'].fillna(value = 'No', inplace = True)
 # work_interfere column
 mental_health_df_raw['work_interfere'].fillna(value = 'Don\'t know', inplace = True)
 
-# final control
+# Final control
 for column in mental_health_df_raw.iloc[:, 3:]:
     print(column, mental_health_df_raw[column].unique())
 
@@ -257,7 +256,8 @@ mental_health_df = mental_health_df_raw.copy()
 mental_health_df_static_clean = mental_health_df.copy()
 mental_health_df.info()
 
-# Streamlit
+
+# STREAMLIT
 st.write('''
     After the cleaning of the dataset:
     - there are 1251 entries and 24 columns. 
@@ -295,6 +295,7 @@ st.write('Dataset on Kaggle: [click link]('+ url_kaggle +')')
 st.text("\n\n")
 st.text("\n\n")
 
+
 ###-------------------------------------------------------- INTERESTING PLOTS --------------------------------------------------------------###
 st.header("Interesting plots")
 st.write('''Some graphs about the data are shown.
@@ -302,7 +303,6 @@ st.write('''Some graphs about the data are shown.
             If you want to better understand the charts and the data they present, see the *"Learn more"* expaneders for each group of graphs.''')
 st.text("\n")
 
-# USEFUL CODE
 # Useful data
 tot_rows = mental_health_df.shape[0]
 colors = ['steelblue', 'lightblue']
@@ -359,10 +359,11 @@ st.text("\n")
 
 
 # TREATMENT AND WORK INTERFERENCE DISTRIBUTIONS
+# Data
 # 1
-labels_treat = mental_health_df['treatment'].value_counts().index.to_list()               # Yes, No
-counts_treat = list(map(lambda x: round((x/tot_rows),2), mental_health_df['treatment'].value_counts()))
-df_treat = pd.DataFrame({'Treatment': labels_treat, 'Counts': mental_health_df['treatment'].value_counts().values})
+labels_treat = mental_health_df['treatment'].value_counts().index.to_list()                                                 # Yes, No
+counts_treat = list(map(lambda x: round((x/tot_rows),2), mental_health_df['treatment'].value_counts()))                     # Normalized
+df_treat = pd.DataFrame({'Treatment': labels_treat, 'Counts': mental_health_df['treatment'].value_counts().values})         # Non normalized
 
 # 2
 labels_work = mental_health_df['work_interfere'].value_counts().index.to_list()          # 'Sometimes', "Don't know", 'Never', 'Rarely', 'Often'
@@ -372,7 +373,7 @@ df_work = pd.DataFrame({'Work interference': labels_work, 'Counts': mental_healt
 # 3
 df_treat_work = mental_health_df.groupby(['work_interfere', 'treatment'])['treatment'].count().unstack(0)
 df_treat_work = df_treat_work.reindex(index = labels_treat, columns = labels_work)
-yes_ans = list(df_treat_work[:].loc['Yes'].values)
+yes_ans = list(df_treat_work[:].loc['Yes'].values)                                   
 no_ans = list(df_treat_work[:].loc['No'].values)
 
 # The label locations
@@ -408,7 +409,7 @@ for p in ax2.patches:
     height = p.get_height()
     ax2.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 14, fontweight = 'bold')
 
-# Title
+# Titles
 ax1.set_title('Employees who have \nsought treatment', fontsize= 16, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
 ax2.set_title('Work interference of the\n mental health condition', fontsize= 16, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
 ax3.set_title('Seeking treatment \nand work interference', fontsize= 14, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
@@ -455,6 +456,7 @@ st.text("\n")
 
 
 # REMOTE WORKING AND WORK INTERFERENCE DISTRIBUTIONS
+# Data
 # 1
 labels_rw = mental_health_df['remote_work'].value_counts().index.to_list()[::-1]               # Yes, No
 counts_rw = list(map(lambda x: round((x/tot_rows),2), mental_health_df['remote_work'].value_counts().reindex(index= labels_rw)))
@@ -466,7 +468,6 @@ df_rw_interf = mental_health_df.groupby(['work_interfere', 'remote_work'])['remo
 df_rw_interf = df_rw_interf.reindex(index = ['Yes', 'No'], columns=labels_work)
 yes_ans = list(df_rw_interf[:].loc['Yes'].values)
 no_ans = list(df_rw_interf[:].loc['No'].values)
-
 
 # The label locations
 x = np.arange(len(labels_work))  
@@ -490,7 +491,7 @@ ax2.set_xticks(list(range(0,5)), labels_work, rotation=30, ha='right')
 ax1.set_title('Employees who work remotely', fontsize= 15, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
 ax2.set_title('Work interference of mental \nhealth condition and working type', fontsize= 15, fontweight= 'heavy', color = 'black', y=1.15, pad=10)
 
-# Legend
+# Legends
 ax1.legend(wedges, labels_rw,
           title="Remote working", loc = 'upper right',
           bbox_to_anchor=(0.60, 0.60, 0.5, 0.5))
@@ -557,7 +558,7 @@ ax2.set_xticks(x, labels_ans)
 ax1.set_title("Family History of the respondents", fontsize= 14, fontweight= 'heavy', color = 'black', y=1.1, pad=65)
 ax2.set_title("Family History and seeking for treatment", fontsize= 14, fontweight= 'heavy', color = 'black', y=1.1, pad=40)
 
-# Legend
+# Legends
 ax1.legend(wedges, labels_ans,
           title="Family history", loc = 'upper right',
           bbox_to_anchor=(0.60, 0.80, 0.5, 0.5))
@@ -617,11 +618,9 @@ width = 0.35
 # Plots
 fig1, (ax1,ax2) = plt.subplots(1,2,figsize =(10, 5))
 fig1.subplots_adjust(wspace=0.35)
-
 ax1.bar(x - width/2, counts_mhc, width, color= 'steelblue', label= 'Mental health')
 ax1.bar(x + width/2, counts_phc, width, color= 'lightblue', label ='Physical health')
 ax2.bar(label_vs, counts_vs, color ='steelblue', label=label_vs)
-
 
 # Labels, ticks 
 ax1.set_xlabel("Answers", labelpad= 13.0, fontname="Arial", fontsize=12, fontweight = 'medium')
@@ -684,6 +683,7 @@ st.text("\n")
 
 
 # BENEFITS, WELNESS PROGRAM AND NUMBER OF EMPLOYEES
+# Data
 # 1
 labels_ben = mental_health_df['benefits'].value_counts().index.to_list()               # 'Yes', "Don't know", 'No'
 counts_ben = list(map(lambda x: round((x/tot_rows),2), mental_health_df['benefits'].value_counts()))
@@ -748,7 +748,7 @@ ax2.set_title('Number of employees and commission \nof mental health benefits', 
 # Legend
 ax2.legend(title = 'Mental health benefits', loc = 'upper right', bbox_to_anchor=(0.65, 0.60, 0.5, 0.5))
 
-
+# Data
 # 3
 labels_well = mental_health_df['wellness_program'].value_counts().reindex(labels_ben).index.to_list()          #'Yes', "Don't know", 'No'
 counts_well = list(map(lambda x: round((x/tot_rows),2), mental_health_df['wellness_program'].value_counts().reindex(labels_well))) 
@@ -782,7 +782,7 @@ ax4.set_xticks(list(range(0,6)), labels_no, rotation = 30, ha='right')
 ax3.set_yticks(np.arange(0.0,1.1, 0.1))
 ax4.set_yticks(np.arange(0.0,1.1, 0.1))
 
-# Perc
+# Percenteges
 for p in ax3.patches:
     height = p.get_height()
     ax3.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 12, fontweight = 'bold')
@@ -802,7 +802,6 @@ ax4.legend(title = 'Mental health benefits', loc = 'upper right', bbox_to_anchor
 st.subheader("Benefits, wellness program and number of employees")
 
 col1, col2 = st.columns([2, 1], gap = "medium") 
-
 with col1: 
     st.pyplot(fig0)
 with col2:
@@ -813,10 +812,8 @@ with st.expander("Learn more"):
     
 st.text("\n")
 st.text("\n")
-
 st.pyplot(fig1)
 st.pyplot(fig2)
-
 with st.expander("Learn more"):
     tab1, tab2 =  st.tabs(["Explanation", "Tables"])
 
@@ -913,10 +910,8 @@ ax1.legend(title = 'Type of colleague', loc = 'upper right', bbox_to_anchor=(0.6
 # Show
 st.subheader("Discussing of Mental health issues with coworkers and supervisors")
 st.pyplot(fig1)
-
 with st.expander("Learn more"):
     tab1, tab2 =  st.tabs(["Explanation", "Tables"])
-
     with tab1:
         st.write('''
         This is the respondent's answer to the questions:
@@ -931,7 +926,6 @@ with st.expander("Learn more"):
 
         - With colleagues, on the other hand, a more confidential bond is usually established, so the choice to talk about one's problems is more personal. Infact about 62% of the respondents answer that they would like to discuss their issues with some of the coworkers, as it's common to talk about personal problems with some friends and not with other acquaintances.
         ''')
-
     with tab2:
         col1, col2 = st.columns(2)
 
@@ -970,7 +964,7 @@ st.text("\n")
 st.text("\n")
 
 
-###---------------------------------------------------------- MODELS ------------------------------------------------------------------###
+###------------------------------------------------------------- MODELS ------------------------------------------------------------------------###
 st.header('Classification Model')
 
 # CLASSIFCATION - Target : treatment 
@@ -984,7 +978,6 @@ st.text('\n\n')
 names = ['Nearest Neighbors', 'Linear SVM', 'Decision Tree', 'Random Forest', 'AdaBoost', 'Gradient Tree Boosting', 'Gaussian Naive Bayes' , 'QDA']
 name_plus = names.copy()
 name_plus.append('All')
-
 
 classifiers = [
     KNeighborsClassifier(),
@@ -1001,7 +994,8 @@ classifiers = [
 attr = mh_df_econded.columns.to_list()
 attr.remove('treatment')
 
-# Declare the target variable
+# Declare the feature vector and the target variable
+X = mh_df_econded.drop('treatment', axis = 1)
 y = mh_df_econded['treatment']
 
 # Select model, features and size
@@ -1033,7 +1027,6 @@ elif select_model == 'QDA':
 # Run the model
 if len(choices) > 0 and st.button('RUN MODEL'):
     with st.spinner('Training...'): 
-        X = mh_df_econded.drop('treatment', axis = 1)
         X = X[choices]
         x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=1)
         x_train = x_train.to_numpy().reshape(-1, len(choices))
@@ -1044,7 +1037,8 @@ if len(choices) > 0 and st.button('RUN MODEL'):
             model.fit(x_train, y_train)
             y_pred = model.predict(x_test)
             accuracy = accuracy_score(y_test, y_pred)
-            st.text("\n\n")
+            st.text("\n")
+            st.text("\n")
             st.subheader('Results')
             st.write(f'Accuracy = {accuracy:.2f}')
 
@@ -1078,8 +1072,4 @@ if len(choices) > 0 and st.button('RUN MODEL'):
                 st.pyplot(fig)
             with tab2:
                 st.table(accuracies_df)
-
-            
         
-
-
