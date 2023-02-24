@@ -101,7 +101,7 @@ st.text("\n\n")
 st.header('Content')
 
 # THE DATASET
-url = 'https://raw.githubusercontent.com/EmmaTosato/Programming_Project/main/survey.csv'
+url = '/Users/emmatosato/Documents/UNI/Magistrale/Programming/Programming_Project/survey.csv'
 mental_health_df_static_raw = get_data(url)
 mental_health_df_raw = mental_health_df_static_raw.copy()
 
