@@ -28,12 +28,12 @@ from sklearn.decomposition import PCA
 ###-------------------------------------------------------------  FUNCTIONS -------------------------------------------------------------------###
 @st.cache(allow_output_mutation = True)
 def get_data(url):
-    mental_health_df_raw = pd.read_csv(url)
-    return mental_health_df_raw
+    df = pd.read_csv(url)
+    return df
 
 @st.cache
 def get_downloadable_data(df):
-    return mental_health_df_raw.to_csv().encode('utf-8')
+    return df.to_csv().encode('utf-8')
 
 # New column for the countries
 def new_column(df):
@@ -101,7 +101,7 @@ st.text("\n\n")
 st.header('Content')
 
 # THE DATASET
-url = '/Users/emmatosato/Documents/UNI/Magistrale/Programming/Programming_Project/survey.csv'
+url = 'https://raw.githubusercontent.com/EmmaTosato/Programming_Project/main/survey.csv'
 mental_health_df_static_raw = get_data(url)
 mental_health_df_raw = mental_health_df_static_raw.copy()
 
@@ -253,7 +253,7 @@ mental_health_df_raw.reset_index(drop=True, inplace=True)
 
 # CLEAN DATASET
 mental_health_df = mental_health_df_raw.copy()
-mental_health_df_static_clean = mental_health_df.copy()
+mental_health_df_static_clean = mental_health_df.copy()    # back-up copy
 mental_health_df.info()
 
 
@@ -288,8 +288,9 @@ st.text("\n\n")
 
 # DOWNLOAD Tabs 
 st.header("Download data")
-st.download_button('Download raw dataset', get_downloadable_data(mental_health_df_static_raw), file_name = 'survey.csv')
+st.download_button('Download raw dataset', get_downloadable_data(mental_health_df_static_raw), file_name = 'survey_raw.csv')
 st.download_button('Download the clean dataset', get_downloadable_data(mental_health_df_static_clean), file_name = 'survey_clean.csv')
+
 url_kaggle = 'https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey'
 st.write('Dataset on Kaggle: [click link]('+ url_kaggle +')')
 st.text("\n\n")
