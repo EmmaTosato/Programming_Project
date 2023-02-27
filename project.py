@@ -97,7 +97,10 @@ to support mental wellness in the tech and open source communities.')
 st.text("\n\n")
 st.text("\n\n")
 
+
 ###------------------------------------------- EXPLORATION AND CLEANING OF THE DATASET ---------------------------------------------------###
+# The EDA and cleaning are more clear on the jupyter notebook.
+
 st.header('Content')
 
 # THE DATASET
@@ -106,9 +109,6 @@ mental_health_df_static_raw = get_data(url)
 mental_health_df_raw = mental_health_df_static_raw.copy()
 
 # USEFUL INFORMATIONS AND MEANING OF THE COLUMNS 
-mental_health_df_raw.head()
-mental_health_df_raw.info()
-
 # Streamlit
 st.write('''Each column (or attribute) in the dataset contains the responses of each respondent to a specific question. 
             The first questions are both general in nature, while the following questions address the main theme of this survey.''')
@@ -174,33 +174,23 @@ st.write('''
 # CONVERTING THE COLUMN'S NAME TO LOWERCASE CHARACTERS
 mental_health_df_raw.columns = mental_health_df_raw.columns.map(str.lower)
 
-
 # DROPPING COLUMNS
-mental_health_df_raw.isnull().sum()
-
 # timestamp and comments column
 mental_health_df_raw.drop(columns=['timestamp','comments'], inplace = True)
 
 # state column
-mental_health_df_raw['state'].value_counts()
 mental_health_df_raw.drop(columns=['state'], inplace = True)
 
 # country column
-mental_health_df_raw['country'].value_counts()
-
-#Grouping states
+# Grouping countries
 eu_l, country2 = new_column(mental_health_df_raw)
-print('Number of people from different places:')
-print(country2.value_counts())
 
 # Visualizing european states
 eu_serie = pd.Series(eu_l)
-eu_serie.value_counts()
 
 
 # CLEANING FROM NON SENSE AND NULL VALUES
 # gender column
-print('Unique values for the gender column:\n',mental_health_df_raw['gender'].unique())
 
 female_list = ['Female', 'female', 'Cis Female', 'F' , 'Woman', 'f', 'Femake' , 'woman', 'Female ', 'cis-female/femme', 'Female (cis)', 'femail' ]
 male_list = ['M','Male','male', 'm' ,'Male-ish', 'maile', 'Cis Male' , 'Mal', 'Male (CIS)', 'Make', 'Male ', 'Man','msle','Mail' , 'cis male', 'Malr', 'Cis Man' ]
@@ -210,42 +200,17 @@ mental_health_df_raw.replace(female_list, 'Female', inplace=True)
 mental_health_df_raw.replace(male_list, 'Male', inplace=True)
 mental_health_df_raw.replace(other_list, 'Other', inplace=True)
 
-print('Unique values of the gender column after the cleaning \n', mental_health_df_raw['gender'].unique())
-print('\nLabel counts:')
-print(mental_health_df_raw['gender'].value_counts())
 
 # age column
-print('Unique values for the age column:\n', mental_health_df_raw['age'].unique())
-print('\n\nFirst 10 min and max values for the age column:')
-print('Max values: ', np.sort(list(mental_health_df_raw['age'].nlargest(10))))
-print('\nMin values: ', np.sort(list(mental_health_df_raw['age'].nsmallest(10))))
-
 mental_health_df_raw.drop(mental_health_df_raw[mental_health_df_raw['age'] < 18].index, inplace= True)
 mental_health_df_raw.drop(mental_health_df_raw[mental_health_df_raw['age'] > 72].index, inplace= True)
 
-print('Unique values of the age column after the cleaning \n', np.sort(mental_health_df_raw['age'].unique()))
-print('\nMin and max age:',mental_health_df_raw['age'].min(),'-',mental_health_df_raw['age'].max() )
-print('\nAverage age: ', int(mental_health_df_raw['age'].mean()))
-
 # self_employed and work_interfere
-print('NaN values for the column self_employed: ', mental_health_df_raw['self_employed'].isnull().sum() )
-print('NaN values for the column work_interfere: ', mental_health_df_raw['work_interfere'].isnull().sum() )
-
-print('\nCounting values for the column self_employed')
-print(mental_health_df_raw['self_employed'].value_counts())
-
-print('\nCounting values for the column self_employed')
-print(mental_health_df_raw['work_interfere'].value_counts())
-
 # self_employed column
 mental_health_df_raw['self_employed'].fillna(value = 'No', inplace = True)
 
 # work_interfere column
 mental_health_df_raw['work_interfere'].fillna(value = 'Don\'t know', inplace = True)
-
-# Final control
-for column in mental_health_df_raw.iloc[:, 3:]:
-    print(column, mental_health_df_raw[column].unique())
 
 # Reindexing
 mental_health_df_raw.reset_index(drop=True, inplace=True)
@@ -254,7 +219,6 @@ mental_health_df_raw.reset_index(drop=True, inplace=True)
 # CLEAN DATASET
 mental_health_df = mental_health_df_raw.copy()
 mental_health_df_static_clean = mental_health_df.copy()    # back-up copy
-mental_health_df.info()
 
 
 # STREAMLIT
@@ -268,7 +232,7 @@ st.write('''
 )
 st.text("\n\n")
 
-# Exploration of the dataset
+# EXPLORATION OF THE DATASET
 st.subheader('Exploration of the dataset')
 
 st.write("Select an option (or both) if you want to explore the dataset:")
@@ -435,7 +399,7 @@ with st.expander("Learn more"):
             - It may not be so simple for the interviewed to admit a mental health condtion and the interference of it with the work, so the *"Sometimes"* response and *"Rarely"* could be vague answers.
             - Remeber that i have replaced the NaN values with *"Don't know"*.
         - The **third plot** shows counts of people who have sought or not a treatment among each response of the previous graph.
-            - we see that the answer *"Sometimes"* had the highest number of people who actually have sought a treatment for mental health condition. Similar pattern was shown for the people who belonged to the *"Often category"*. Even if the answer was *"Sometimes"* (for the reasons stated above), a lot of people still decided to get help.
+            - we see that the answer *"Sometimes"* has the highest number of people who actually have sought a treatment for mental health condition. Similar pattern was shown for the people who belonged to the *"Often"* and *"Rarely"* categories. Even if the answer was *"Sometimes"* (for the reasons stated above), a lot of people still decided to get help.
             - unexpectedly, for people whose mental health *"Never"* has interfered at work, a small percentage still wanted to get treatment. It can be given by a variety of reasons like personal needs, a good capacity of keeping personal life and work spaced out or a preventive gesture.
             - practically all of the respondent that didn't answer to the question (the *don't know* category) aren't seeking a treatment for mental health condition. So probably these people do not suffer from mental illness. Another assumption is that they could be reticent to search a treatment.
         ''')
@@ -510,7 +474,7 @@ with st.expander("Learn more"):
             - The **first plot** shows the answers to the question, *"Do you work remotely (outside of an office) at least 50% of the time?"*
             - To better understand if the are correlations between the type of working and the interference of a possible mental health 
               condition with the work, there is the **second plot**:
-                - For every answer, the percentage of people who work in the office is bigger.
+                - For every answer, the number of people who work in the office is bigger.
                 - If we compute the percentages of people who work remotly and in the office for every answer, we find roughly the same percentages (about 30% work remotely and the other 70% in the office), so there are no particular values to be highlighted.
         ''')
 
@@ -574,10 +538,10 @@ with st.expander("Learn more"):
 
     with tab1:
          st.write('''
-            - The **first plot** shows the answer to the question, *"Do you have a family history of mental illness?"*.
+            - The **first plot** shows the answers to the question, *"Do you have a family history of mental illness?"*.
             - The **second plot** shows the counts of respondents who have sought a treatment, given that they came from a family with or without a history in mental illness.
-                - among who have a family history, the 74 % have sought a treatment while for the ones that don't have a family history, only the 35% have searched treatments.
-                - this could mean that peoople who have had cases of mental illness in the family pay more attention to this a topic. Infact, when it comes to mental health, the family history matters.
+                - among who have a family history, the 74% have sought a treatment (and 26% didn't), while for the ones that don't have a family history, only the 35% have searched treatments (so 65% didn't!).
+                - this could mean that peoople who have had cases of mental illness in the family pay more attention to this topic. Infact, when it comes to mental health, the family history matters.
         ''')
 
     with tab2:
@@ -665,12 +629,13 @@ with st.expander("Learn more"):
             We see that the about the 74% of respondents don't think that discussing a physical health issue would have negative consequences, while only 39% have the same thought for the mental health.
             Infact we see that there is more indecision among the respondents for the mental health category.
 
-            This highlights how differently mental and physical health are seen and treated. Keeping in mind that this survey took place in 2014, we could say that there are still prejudices on mental health issues in our society, because they are "invisible" and more complex to undestrand. 
-            Often there is a stigma against those who suffer of mental health issues, because they are considered weird and dangerous. All of these reasons may therefore explain how talking about a mental problem with the employer could be a negative action.
+            This highlights how differently mental and physical health are seen and treated. Keeping in mind that this survey took place in 2014, we could say that there are still prejudices on mental health issues in workplace, because they are "invisible" and more complex to undestrand. 
+            Sometimes there is a stigma against those who suffer of mental health issues, because they are considered weird and dangerous. 
+            All of these reasons may therefore explain how talking about a mental problem with the employer could be a negative and risky action, like losing the job or being treated differently by colleagues.
 
-            The **second plot** shows the respondent's answer to the question: *"Do you feel that your employer takes mental health as seriously as physical health?"*
+            The **second plot** shows the respondent's answers to the question: *"Do you feel that your employer takes mental health as seriously as physical health?"*
             - this should be a direct way to understand what we tried to infer above.
-            - unfortunately plot is not very informative since about the half of the responses were *"I don't know"*
+            - unfortunately the plot is not very informative since about the half of the responses were *"I don't know"*
         ''')
     with tab2:
         st.write('Mental health consequences')
@@ -682,6 +647,89 @@ with st.expander("Learn more"):
 
 st.text("\n")
 st.text("\n")
+
+
+# MENTAL VS PHYSICAL HEALTH INTERVIEW
+# Data
+# 1
+mhc_inter = mental_health_df['mental_health_interview'].value_counts().reindex(index=['Yes', 'Maybe', 'No'])
+phc_inter = mental_health_df['phys_health_interview'].value_counts().reindex(index= ['Yes', 'Maybe', 'No'])
+
+labels_inter = mhc_inter.index.to_list()                 
+counts_mhc_inter = list(map(lambda x: round((x/tot_rows),2), mhc_inter))
+counts_phc_inter = list(map(lambda x: round((x/tot_rows),2), phc_inter))
+
+df_mhc_inter = pd.DataFrame({'Bringing up a mental health issue': labels, 'Counts': mhc_inter.values})
+df_phc_inter = pd.DataFrame({'Bringing up a physical health issue': labels, 'Counts': phc_inter.values})
+  
+
+# The label locations
+x = np.arange(len(labels_inter))  
+width = 0.35  
+
+# Plots
+fig1, ax1 = plt.subplots(figsize =(8, 4))
+fig1.subplots_adjust(wspace=0.5)
+ax1.bar(x - width/2, counts_mhc_inter, width, color= 'steelblue', label= 'Mental health')
+ax1.bar(x + width/2, counts_phc_inter, width, color= 'lightblue', label ='Physical health')
+
+
+# Labels, ticks 
+ax1.set_xlabel("Answers", labelpad= 13.0, fontname="Arial", fontsize=12, fontweight = 'medium')
+ax1.set_ylabel("Percentages", labelpad= 13.0, fontname="Arial", fontsize=12, fontweight = 'medium')
+ax1.set_xticks(x, labels)
+ax1.set_yticks(np.arange(0.0, 1.1, 0.1))
+
+# Percentages
+for p in ax1.patches:
+   height = p.get_height() 
+   ax1.annotate("{}%".format(round(height*100)), (p.get_x() + p.get_width() / 2, height+ 0.01), ha='center', fontsize= 10, fontweight = 'bold')
+
+# Titles
+ax1.set_title("Bringing up Mental and Physical health issues\n with a potential Employer in an interview", fontsize= 14, fontweight= 'heavy', color = 'black', y=1.1, pad=10)
+
+# Legend
+ax1.legend(title = 'Type of health', loc = 'upper right', bbox_to_anchor=(0.65, 0.55, 0.5, 0.5))
+
+# Show
+st.subheader("Mental and Physical health in an interview")
+st.pyplot(fig1)
+
+with st.expander("Learn more"):
+    tab1, tab2 =  st.tabs(["Explanation", "Tables"])
+
+    with tab1:
+        st.write('''
+            The **first plot** compares the resoponses to these 2 question:
+
+            1. "*Would you bring up a mental health issue with a potential employer in an interview?*"
+
+            2. "*Would you bring up a physical health issue with a potential employer in an interview?*"
+
+            We see:
+
+            - the 80% of the respondents to the first question said tht they wouldn't bring up a mental health issue with a potential employer, and that's a very high percentage.
+
+            - for the respondents to the second question, the situation changes because there is more indecison. Anyway it's clear that there is more reticence to bring up a mental health issue rather than a physical one. 
+
+            - so the plot reflects the findings just made for the previous chart, and even emphasizes them.
+            ''')
+
+    with tab2:
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.write('Mental health consequences')
+            st.dataframe(df_mhc_inter)
+
+        with col2:
+            st.write('Physical health consequences')
+            st.dataframe(df_phc_inter)
+        
+       
+st.text("\n")
+st.text("\n")
+
 
 
 # BENEFITS, WELNESS PROGRAM AND NUMBER OF EMPLOYEES
@@ -821,9 +869,9 @@ with st.expander("Learn more"):
 
     with tab1:
         st.write('''
-            The **first plot** was the respondent's answer to the question, *"Does your employer provide mental health benefits?"*
+            The **first plot** was the respondent's answers to the question, *"Does your employer provide mental health benefits?"*.
 
-            - Only the 38% of the respondents said that their employer provided them mental health benefits
+            - Around the 38% of the respondents said that their employer provided them mental health benefits
             ''')
         st.text("\n")
         st.write('''
@@ -842,10 +890,10 @@ with st.expander("Learn more"):
               We see that there more or less the same trend as the second plot: with the increase of employees there is a decrese of the *"No"* answer. 
               But, unlike before, the percentege of *"No"* always overcomes the percentege of *"Yes"* (except for the last category)
 
-            *So what do these two graphs mean?*
-            Maybe with the increase in the number of employees, so with bigger company, more emphasis is placed on mental health care. 
+            *So what do these four graphs mean?*
+            Maybe with the increase in the number of employees, so with bigger companies, more emphasis is placed on mental health care. 
             This also makes sense because in smaller companies the climate may be more relaxed, less competitive, and more "comfortable" than in large tech companies. 
-            This interpretation can be viewed both positively and negatively; in the former case, smaller companies might have fewer cases of mental illness for, in the latter case, precisely because the climate is more "confidential," 
+            This interpretation can be viewed both positively and negatively; in the former case, smaller companies might have fewer cases of mental illness or, in the latter case, precisely because the climate is more "confidential," 
             certain issues might emerge more hardly and be taken less seriously.
 
             We see this trend more in the second graph than in the fourth, which reports a deficiency in mental health care common both for small, medium and big companies. 
@@ -916,7 +964,7 @@ with st.expander("Learn more"):
     tab1, tab2 =  st.tabs(["Explanation", "Tables"])
     with tab1:
         st.write('''
-        This is the respondent's answer to the questions:
+        This is the respondent's answers to the questions:
         1. *"Would you be willing to discuss a mental health issue with your coworkers?"* 
         2. *"Would you be willing to discuss a mental health issue with your direct supervisor(s)?"*
         ''')
@@ -926,7 +974,7 @@ with st.expander("Learn more"):
 
         - We see that for the supervisor's question, the majority of individuals answer *"Yes"*, perhaps because the respondents think that the supervisor should know about these problems.   
 
-        - With colleagues, on the other hand, a more confidential bond is usually established, so the choice to talk about one's problems is more personal. Infact about 62% of the respondents answer that they would like to discuss their issues with some of the coworkers, as it's common to talk about personal problems with some friends and not with other acquaintances.
+        - With colleagues, on the other hand, a more confidential bond is usually established, so the choice to talk about private problems is more a personal thing. Infact about 62% of the respondents answer that they would like to discuss their issues with some of the coworkers, as it's common to talk about personal problems with some friends and not with other acquaintances.
         ''')
     with tab2:
         col1, col2 = st.columns(2)
@@ -943,6 +991,7 @@ st.text("\n")
 
 # CONVERTING CATEGORICAL VALUES
 mh_df_econded = encoding(mental_health_df)
+
 
 # HEATMAP
 # Compute the correlation matrix
@@ -1058,7 +1107,6 @@ if len(choices) > 0 and st.button('RUN MODEL'):
 
             accuracies.sort_values(ascending=True, inplace=True)
             accuracies_df = pd.DataFrame({'Models':accuracies.index , 'Accuracies':accuracies.values})
-            print(accuracies_df)
 
             # Plot
             fig, ax = plt.subplots(figsize = (8,4))
