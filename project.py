@@ -92,7 +92,7 @@ st.write('''
 This dataset is from a 2014 survey that measures attitudes towards mental health and frequency of mental health disorders 
 in the tech workplace. The organization that has collected this data is the "Open Sourcing Mental Health" organization (OSMH). 
 Open Sourcing Mental Health is a non-profit, corporation dedicated to raising awareness, educating, and providing resources 
-to support mental wellness in the tech and open source communities.')
+to support mental wellness in the tech and open source communities.
 ''')
 st.text("\n\n")
 st.text("\n\n")
@@ -1080,8 +1080,8 @@ if len(choices) > 0 and st.button('RUN MODEL'):
     with st.spinner('Training...'): 
         X = X[choices]
         x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=1)
-        x_train = x_train.to_numpy().reshape(-1, len(choices))
-        x_test = x_test.to_numpy().reshape(-1, len(choices))
+        #x_train = x_train.to_numpy().reshape(-1, len(choices))
+        #x_test = x_test.to_numpy().reshape(-1, len(choices))
 
         # If one model il selected
         if select_model != 'All':
